@@ -5,18 +5,20 @@ from src.web_socket_message_handlers.command_processors.choose import ChooseComm
 from src.web_socket_message_handlers.command_processors.dadjoke import DadjokeCommandProcessor
 from src.web_socket_message_handlers.command_processors.mbn import MustBeNiceCommandProcessor
 from src.web_socket_message_handlers.command_processors.no import NockOutCommandProcessor
-from src.web_socket_message_handlers.command_processors.relink import RelinkCommandProcessor
+# from src.web_socket_message_handlers.command_processors.relink import RelinkCommandProcessor
 from src.web_socket_message_handlers.command_processors.ro import RockOutCommandProcessor
 from src.web_socket_message_handlers.command_processors.sj import SureJanCommandProcessor
-from src.web_socket_message_handlers.command_processors.theme import ThemeCommandProcessor
+# from src.web_socket_message_handlers.command_processors.theme import ThemeCommandProcessor
 from src.web_socket_message_handlers.command_processors.twss import ThatsWhatSheSaidCommandProcessor
-from src.web_socket_message_handlers.command_processors.unwelcome import UnwelcomeCommandProcessor
+# from src.web_socket_message_handlers.command_processors.unwelcome import UnwelcomeCommandProcessor
 from src.web_socket_message_handlers.command_processors.urban import UrbanCommandProcessor
-from src.web_socket_message_handlers.command_processors.welcome import WelcomeCommandProcessor
+# from src.web_socket_message_handlers.command_processors.welcome import WelcomeCommandProcessor
+from src.web_socket_message_handlers.command_processors.charlixcx import CharlixcxCommandProcessor
+from src.web_socket_message_handlers.command_processors.yt import YtCommandProcessor
 
 command_processors: List[AbstractCommandProcessor] = [
-    WelcomeCommandProcessor(),
-    UnwelcomeCommandProcessor(),
+    # WelcomeCommandProcessor(),
+    # UnwelcomeCommandProcessor(),
     DadjokeCommandProcessor(),
     RockOutCommandProcessor(),
     NockOutCommandProcessor(),
@@ -25,6 +27,8 @@ command_processors: List[AbstractCommandProcessor] = [
     MustBeNiceCommandProcessor(),
     ThatsWhatSheSaidCommandProcessor(),
     ChooseCommandProcessor(),
-    ThemeCommandProcessor(),
-    RelinkCommandProcessor()
+    CharlixcxCommandProcessor(),
+    YtCommandProcessor()
+    # ThemeCommandProcessor(),
+    # RelinkCommandProcessor()
 ]
