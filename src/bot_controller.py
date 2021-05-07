@@ -26,6 +26,11 @@ class AbstractBotController(ABC):
 
     @property
     @abstractmethod
+    def star(self) -> None:
+        pass
+
+    @property
+    @abstractmethod
     def doped(self) -> bool:
         pass
 
@@ -34,6 +39,11 @@ class AbstractBotController(ABC):
     def noped(self) -> bool:
         pass
 
+    @property
+    @abstractmethod
+    def starred(self) -> bool:
+        pass
+    
     @abstractmethod
     def reset_vote(self) -> None:
         pass
@@ -107,6 +117,15 @@ class BotController(AbstractBotController):
         }))
         self.__noped = True
 
+    def star(self) -> None:
+        if self.__starred:
+            return
+        self.__web_socket_client.send(WebSocketMessage(label='starTrack', payload={
+            'roomId': self.__env.get_jqbx_room_id(),
+            'user': get_bot_user(self.__env)
+        }))
+        self.__starred = True
+
     @property
     def doped(self) -> bool:
         return self.__doped
@@ -115,6 +134,11 @@ class BotController(AbstractBotController):
     def noped(self) -> bool:
         return self.__noped
 
+    @property
+    def starred(self) -> bool:
+        return self.__starred
+
     def reset_vote(self) -> None:
         self.__doped = False
         self.__noped = False
+        self.__starred = False

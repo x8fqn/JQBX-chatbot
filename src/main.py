@@ -38,4 +38,5 @@ def main(web_socket_client: AbstractWebSocketClient, env: AbstractEnvironment, l
 
 
 if __name__ == '__main__':
-    main(WebSocketClient.get_instance(), Environment(), Logger())
+    while True:
+        main(WebSocketClient.get_instance(), Environment(), Logger())
