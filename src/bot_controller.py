@@ -75,7 +75,7 @@ class BotController(AbstractBotController):
             'roomId': self.__env.get_jqbx_room_id(),
             'user': get_bot_user(self.__env),
             'message': {
-                'message': '<br/>'.join(lines),
+                'message': ' <br/> '.join(lines),
                 'user': get_bot_user(self.__env),
                 'selectingEmoji': False
             }

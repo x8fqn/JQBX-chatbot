@@ -28,6 +28,9 @@ class AbstractEnvironment(ABC):
     def get_data_service_base_url(self) -> str:
         pass
 
+    @abstractmethod
+    def get_jqbx_first_api(self) -> str:
+        pass
 
 class Environment(AbstractEnvironment):
     def get_spotify_user_id(self) -> str:
@@ -44,3 +47,6 @@ class Environment(AbstractEnvironment):
 
     def get_data_service_base_url(self) -> str:
         return environ.get('DATA_SERVICE_BASE_URL')
+
+    def get_jqbx_first_api(self) -> str:
+        return environ.get('JQBX_FIRST_API')

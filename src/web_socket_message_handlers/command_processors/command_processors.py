@@ -16,6 +16,8 @@ from src.web_socket_message_handlers.command_processors.urban import UrbanComman
 from src.web_socket_message_handlers.command_processors.charlixcx import CharlixcxCommandProcessor
 from src.web_socket_message_handlers.command_processors.yt import YtCommandProcessor
 from src.web_socket_message_handlers.command_processors.star import StarProcessor
+from src.web_socket_message_handlers.command_processors.first import FirstProcessor
+
 
 command_processors: List[AbstractCommandProcessor] = [
     # WelcomeCommandProcessor(),
@@ -30,7 +32,8 @@ command_processors: List[AbstractCommandProcessor] = [
     ChooseCommandProcessor(),
     CharlixcxCommandProcessor(),
     YtCommandProcessor(),
-    StarProcessor()
+    StarProcessor(),
+    FirstProcessor()
     # ThemeCommandProcessor(),
     # RelinkCommandProcessor()
 ]

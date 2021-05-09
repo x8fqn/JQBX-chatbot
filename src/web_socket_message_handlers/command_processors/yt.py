@@ -21,13 +21,12 @@ class YtCommandProcessor(AbstractCommandProcessor):
     @property
     def help(self) -> str:
         return '''
-            get from youtube
+            Listen to this tune on YouTube 
         '''
 
     def process(self, user_id: str, payload: Optional[str] = None) -> None:
         query = ''
         result = ''
-        print(repr(self.__room_state.current_track))
         for artist in self.__room_state.current_track["artists"]:
             query += '"' + artist['name'] + '" '
         query += '"' + self.__room_state.current_track['name'] + '"'
@@ -36,7 +35,7 @@ class YtCommandProcessor(AbstractCommandProcessor):
             youtubeSearch(query, max_results=10).to_json())
 
         durationOrig = int(
-            self.__room_state.current_track['duration_ms']) / 1000
+            self.__room_state.current_track['duration_ms']) // 1000
 
         for video in youtubeRequest['videos']:
             duration = video['duration'].split(':')
@@ -46,9 +45,9 @@ class YtCommandProcessor(AbstractCommandProcessor):
             elif len(duration) == 2:
                 duration = int(duration[0]) * 60 + int(duration[1])
             if -2 <= (duration - durationOrig) <= 2:
-                result += 'Title: ' + video['title'] + '<br>' + 'Link: https://youtu.be/' + \
-                    video['id'] + '<br> Duration: ' + \
-                    video['duration'] + '<br>'
+                result = ['Title: %s' % video['title'], 
+                          'Link: https://youtu.be/%s' % video['id'], 
+                          'Duration: %s' % video['duration']]
                 break
                 pass
         self.__bot_controller.chat(result)
