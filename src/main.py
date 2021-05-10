@@ -1,3 +1,4 @@
+import time
 from src.env import AbstractEnvironment, Environment
 from src.helpers import get_bot_user
 from src.logger import AbstractLogger, Logger
@@ -40,3 +41,10 @@ def main(web_socket_client: AbstractWebSocketClient, env: AbstractEnvironment, l
 if __name__ == '__main__':
     while True:
         main(WebSocketClient.get_instance(), Environment(), Logger())
+        try:
+            print('[ALERT] Restarting. Send again to stop (5 sec.)')
+            time.sleep(5)
+        except KeyboardInterrupt:
+            print('[ALERT] Keyboard interrupted, stopping')
+            break
+print('[INFO] Program work is ended!')

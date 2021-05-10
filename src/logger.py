@@ -10,6 +10,10 @@ class AbstractLogger(ABC):
         pass
 
     @abstractmethod
+    def alert(self, context: str) -> None:
+        pass
+
+    @abstractmethod
     def error(self, exception: BaseException) -> None:
         pass
 
@@ -22,6 +26,13 @@ class Logger(AbstractLogger):
         }
         if data:
             log['data'] = data
+        print(json.dumps(log))
+
+    def alert(self, context: str) -> None:
+        log = {
+            'level': 'ALERT',
+            'context': context
+        }
         print(json.dumps(log))
 
     def error(self, exception: BaseException) -> None:

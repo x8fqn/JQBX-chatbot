@@ -25,9 +25,14 @@ class FirstProcessor(AbstractCommandProcessor):
         return 'Get info about the first play of the current track on JQBX'
 
     def process(self, user_id: str, payload: Optional[str]) -> None:
-        jqbx_first_request = json.loads(requests.get('%s/%s' % (
-            self.__env.get_jqbx_first_api(),
-            self.__room_state.current_track['uri'])).text)
+        try:
+            jqbx_first_request = json.loads(requests.get('%s/%s' % (
+                self.__env.get_jqbx_first_api(),
+                self.__room_state.current_track['uri'])).text)
+        except:
+            self.__bot_controller.chat('You are the first. Congrats! :cake:')
+            return None
+
         msg = ['%s by %s was first played on JQBX by "%s" on %s in "%s".' % (
                 jqbx_first_request['track']['name'],
                 ", ".join([i['name'] for i in jqbx_first_request['track']['artists']]),

@@ -8,12 +8,9 @@ from src.web_socket_message_handlers.command_processors.voting_machine import Vo
 
 
 class RockOutCommandProcessor(AbstractCommandProcessor):
-    # def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
-    #              data_service: AbstractDataService = DataService()):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance()):
         self.__voting_machine = VotingMachine('row')
         self.__room_state = room_state
-#        self.__data_service = data_service
 
     @property
     def keyword(self) -> str:
