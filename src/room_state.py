@@ -22,6 +22,11 @@ class AbstractRoomState(ABC):
 
     @property
     @abstractmethod
+    def djs(self) -> List[dict]:
+        pass
+
+    @property
+    @abstractmethod
     def current_track(self) -> Optional[dict]:
         pass
 
@@ -38,6 +43,10 @@ class AbstractRoomState(ABC):
         pass
 
     @abstractmethod
+    def set_djs(self, djs: List[dict]) -> None:
+        pass
+
+    @abstractmethod
     def set_current_track(self, current_track: dict) -> None:
         pass
 
@@ -50,6 +59,7 @@ class RoomState(AbstractRoomState):
             raise Exception('Use get_instance() instead!')
         self.__mod_ids: List[str] = []
         self.__users: List[dict] = []
+        self.__djs: List[dict] = []
         self.__current_track: Optional[dict] = None
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
@@ -74,6 +84,10 @@ class RoomState(AbstractRoomState):
         return self.__users
 
     @property
+    def djs(self) -> List[dict]:
+        return self.__djs
+
+    @property
     def current_track(self) -> Optional[dict]:
         return self.__current_track
 
@@ -82,6 +96,9 @@ class RoomState(AbstractRoomState):
 
     def set_users(self, users: List[dict]) -> None:
         self.__users = users
+
+    def set_djs(self, djs: List[dict]) -> None:
+        self.__djs = djs
 
     def set_current_track(self, current_track: dict) -> None:
         self.__current_track = current_track

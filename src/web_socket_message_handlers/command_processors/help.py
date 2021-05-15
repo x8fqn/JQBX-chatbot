@@ -24,5 +24,5 @@ class HelpCommandProcessor(AbstractCommandProcessor):
         lines: List[str] = []
         for key in sorted(self.__commands.keys()):
             command = self.__commands[key]
-            lines.append('/%s: %s' % (command.keyword, command.help))
+            lines.append('/%s - %s' % (command.keyword, command.help))
         self.__bot_controller.chat(lines)
