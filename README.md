@@ -43,13 +43,13 @@ In order for the AWS deployment to succeed, the repository should be configured 
 | SPOTIFY_USER_ID | Same context as in [Environment Variables](#Environment-Variables) |
 
 ## TODO
-[x] /yt
-[x] I think we need /first
-[x] stability (auto-restarting improve)
-[ ] choose logging verbose level
-[ ] inter-room communication (С)
-[ ] /config
-[ ] link to last.fm for stats
-[ ] tune of the month (top 10)
+- [x] /yt
+- [x] I think we need /first
+- [x] stability (auto-restarting improve)
+- [x] choose logging verbose level
+- [ ] inter-room communication /hay (С)
+- [ ] link to last.fm for stats
+- [ ] /config
+- [ ] tune of the month (top 10)
 
-[ ] /best (??)
+- [ ] /best (Room checking? API?)

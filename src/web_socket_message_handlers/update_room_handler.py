@@ -1,22 +1,22 @@
 from typing import List
 
 from src.bot_controller import AbstractBotController, BotController
-from src.data_service import AbstractDataService, DataService
 from src.env import Environment, AbstractEnvironment
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from src.logger import AbstractLogger, Logger
 
 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
-                 data_service: AbstractDataService = DataService(),
-                 env: AbstractEnvironment = Environment()):
+                 env: AbstractEnvironment = Environment(),
+                 logger: AbstractLogger = Logger()):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
-        self.__data_service = data_service
         self.__env = env
+        self.__logger = logger
 
     @property
     def message_label(self) -> str:
@@ -53,8 +53,13 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         tracks = payload.get('tracks', [])
         if tracks:
             self.__room_state.set_current_track(tracks[0])
+            self.__logger.info('Track playing now: %s - %s' % (
+                tracks[0]['name'],
+                ", ".join([i['name'] for i in tracks[0]['artists']])
+                ))
 
     def __update_room_title(self, payload: dict) -> None:
         room_title = payload.get('title')
         if room_title:
             self.__room_state.set_room_title(room_title)
+            self.__logger.info('Room title changed: %s' % room_title)

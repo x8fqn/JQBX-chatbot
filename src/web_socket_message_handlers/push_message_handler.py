@@ -1,4 +1,5 @@
 from typing import List, Dict
+from src import logger
 
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.web_socket_message_handlers.command_processors.command_processors import command_processors
@@ -6,12 +7,15 @@ from src.web_socket_message_handlers.command_processors.help import HelpCommandP
 from src.env import AbstractEnvironment, Environment
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from src.logger import Logger, AbstractLogger
 
 
 class PushMessageHandler(AbstractWebSocketMessageHandler):
     def __init__(self, env: AbstractEnvironment = Environment(),
+                 logger: AbstractLogger = Logger(),
                  _command_processors: List[AbstractCommandProcessor] = None):
         self.__env = env
+        self.__logger = logger
         self.__command_processors: Dict[str, AbstractCommandProcessor] = {
             x.keyword: x for x in _command_processors or (command_processors + [HelpCommandProcessor()])
         }
@@ -36,3 +40,6 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         command_processor = self.__command_processors.get(keyword)
         if command_processor:
             command_processor.process(user_id, payload)
+        self.__logger.info('%s by %s processed' % (
+            repr(parts), user_id
+        ))

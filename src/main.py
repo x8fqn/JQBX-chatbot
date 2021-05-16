@@ -16,7 +16,7 @@ def main(web_socket_client: AbstractWebSocketClient, env: AbstractEnvironment, l
         }))
 
     def __on_message(message: WebSocketMessage) -> None:
-        logger.info('Incoming Message', message.as_dict())
+        logger.debug('Incoming Message', message.as_dict())
         try:
             handler = web_socket_message_handler_map.get(message.label, None)
             if handler:
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     while True:
         main(WebSocketClient.get_instance(), Environment(), Logger())
         try:
-            print('[ALERT] Restarting. Send again to stop (5 sec.)')
+            print('[ALERT] Restarting. Send again to exit (5 sec.)')
             time.sleep(5)
         except KeyboardInterrupt:
             print('[ALERT] Keyboard interrupted, stopping')

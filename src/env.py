@@ -32,6 +32,10 @@ class AbstractEnvironment(ABC):
     def get_jqbx_first_api(self) -> str:
         pass
 
+    @abstractmethod
+    def get_log_level(self) -> int:
+        pass
+
 class Environment(AbstractEnvironment):
     def get_spotify_user_id(self) -> str:
         return environ.get('SPOTIFY_USER_ID')
@@ -50,3 +54,6 @@ class Environment(AbstractEnvironment):
 
     def get_jqbx_first_api(self) -> str:
         return environ.get('JQBX_FIRST_API')
+
+    def get_log_level(self) -> int:
+        return environ.get('LOG_LEVEL')

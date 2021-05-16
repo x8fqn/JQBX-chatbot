@@ -48,7 +48,7 @@ class WebSocketClient(AbstractWebSocketClient):
         self.__ws.run_forever()
 
     def send(self, web_socket_message: WebSocketMessage) -> None:
-        self.__logger.info('Outgoing Message', web_socket_message.as_dict())
+        self.__logger.debug('Outgoing Message', web_socket_message.as_dict())
         serialized = str(web_socket_message.code)
         array_part = [x for x in [web_socket_message.label, web_socket_message.payload] if x]
         if array_part:
