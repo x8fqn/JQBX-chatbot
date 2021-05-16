@@ -46,13 +46,13 @@ class Logger(AbstractLogger):
             'DEBUG' 
         )
         self.__envlevel = int(env.get_log_level())
-        self.__dateTimeString = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         
     def debug(self, context: str, data: Optional[Union[str, dict, list]] = None) -> None:
         __level = 7
+        __dateTimeString = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         if __level <= self.__envlevel:
             log = {
-                'time': self.__dateTimeString,
+                'time': __dateTimeString,
                 'level': self.__levels[__level],
                 'context': context
             }
@@ -62,9 +62,10 @@ class Logger(AbstractLogger):
         
     def info(self, context: str, data: Optional[Union[str, dict, list]] = None) -> None:
         __level = 6
+        __dateTimeString = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         if __level <= self.__envlevel:
             log = {
-                'time': self.__dateTimeString,
+                'time': __dateTimeString,
                 'level': self.__levels[__level],
                 'context': context
             }
@@ -74,9 +75,10 @@ class Logger(AbstractLogger):
 
     def error(self, exception: BaseException) -> None:
         __level = 3
+        __dateTimeString = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         if __level <= self.__envlevel:
             print(json.dumps({
-                'time': self.__dateTimeString,
+                'time': __dateTimeString,
                 'level': self.__levels[__level],
                 'error': str(exception),
                 'trace': traceback.format_tb(exception.__traceback__)
@@ -84,9 +86,10 @@ class Logger(AbstractLogger):
 
     def alert(self, context: str) -> None:
         __level = 1
+        __dateTimeString = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         if __level <= self.__envlevel:
             log = {
-                'time': self.__dateTimeString,
+                'time': __dateTimeString,
                 'level': self.__levels[__level],
                 'context': context
             }
