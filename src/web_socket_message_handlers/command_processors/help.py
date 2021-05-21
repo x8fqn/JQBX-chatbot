@@ -22,7 +22,25 @@ class HelpCommandProcessor(AbstractCommandProcessor):
 
     def process(self, user_id: str, payload: Optional[str]) -> None:
         lines: List[str] = []
-        for key in sorted(self.__commands.keys()):
-            command = self.__commands[key]
-            lines.append('/%s - %s' % (command.keyword, command.help))
-        self.__bot_controller.chat(lines)
+        if payload in {None, ''}:
+            return self.__bot_controller.chat(
+                ', '.join(['/%s' % self.__commands[key].keyword for key in sorted(self.__commands.keys())]))
+        payload = payload.strip()
+        if payload.startswith(('-', '--')):
+            if payload in {'-h', '--help'}:
+                helpMsg = [
+                'Usage:',
+                '/help [command] - get a command description',
+                '/help --verbose',
+                'Arguments:',
+                '--help - show this message',
+                '-v, --verbose - informative version of help (for desktop)']
+                return self.__bot_controller.chat(helpMsg)
+            elif payload in {'-v', '--verbose'}:
+                return self.__bot_controller.chat(
+                    ['/%s - %s' % (self.__commands[key].keyword, self.__commands[key].help) for key in sorted(self.__commands.keys())])
+        if payload in [self.__commands[key].keyword for key in self.__commands.keys()]:
+            for key in self.__commands.keys():
+                if self.__commands[key].keyword == payload:
+                    return self.__bot_controller.chat('/%s - %s' % (self.__commands[key].keyword, self.__commands[key].help))
+

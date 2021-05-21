@@ -53,10 +53,6 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         tracks = payload.get('tracks', [])
         if tracks:
             self.__room_state.set_current_track(tracks[0])
-            self.__logger.info('Track playing now: %s - %s' % (
-                tracks[0]['name'],
-                ", ".join([i['name'] for i in tracks[0]['artists']])
-                ))
 
     def __update_room_title(self, payload: dict) -> None:
         room_title = payload.get('title')

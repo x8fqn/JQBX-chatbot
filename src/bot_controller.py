@@ -11,7 +11,11 @@ class AbstractBotController(ABC):
     @abstractmethod
     def chat(self, message: Union[str, List[str]]) -> None:
         pass
-
+    
+    @abstractmethod
+    def interroom_chat(self, room_id: str, username: str, message: str) -> None:
+        pass
+    
     @abstractmethod
     def whisper(self, message: str, recipient: dict) -> None:
         pass
@@ -80,6 +84,19 @@ class BotController(AbstractBotController):
                 'selectingEmoji': False
             }
         }
+        self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
+
+    def interroom_chat(self, room_id: str, username: str, message: str) -> None:
+        payload = {
+            'roomId': room_id,
+            'user': get_bot_user(self.__env),
+            'message': {
+                'message': message,
+                'user': get_bot_user(self.__env),
+                'selectingEmoji': False
+            }
+        }
+        payload['message']['user']['username'] = username
         self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
 
     def whisper(self, message: str, recipient: dict) -> None:

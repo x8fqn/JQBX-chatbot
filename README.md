@@ -46,10 +46,11 @@ In order for the AWS deployment to succeed, the repository should be configured 
 - [x] /yt
 - [x] I think we need /first
 - [x] stability (auto-restarting improve)
-- [x] choose logging verbose level
+- [x] logging verbose level
+- [ ] /config
 - [ ] inter-room communication /hay (С)
 - [ ] link to last.fm for stats
-- [ ] /config
 - [ ] tune of the month (top 10)
 
-- [ ] /best (Room checking? API?)
+- [ ] Formatted messages
+- [ ] /best (Rooms analyse? API?)

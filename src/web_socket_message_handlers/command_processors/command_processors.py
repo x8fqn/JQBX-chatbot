@@ -17,6 +17,7 @@ from src.web_socket_message_handlers.command_processors.charlixcx import Charlix
 from src.web_socket_message_handlers.command_processors.yt import YtCommandProcessor
 from src.web_socket_message_handlers.command_processors.star import StarProcessor
 from src.web_socket_message_handlers.command_processors.first import FirstProcessor
+from src.web_socket_message_handlers.command_processors.hay import HayProcessor
 
 
 command_processors: List[AbstractCommandProcessor] = [
@@ -33,7 +34,8 @@ command_processors: List[AbstractCommandProcessor] = [
     CharlixcxCommandProcessor(),
     YtCommandProcessor(),
     StarProcessor(),
-    FirstProcessor()
+    FirstProcessor(),
+    HayProcessor()
     # ThemeCommandProcessor(),
     # RelinkCommandProcessor()
 ]
