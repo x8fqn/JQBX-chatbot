@@ -2,7 +2,7 @@ from typing import Optional, List, cast
 import requests
 import json
 from dateutil import parser as dateparser
-from src.env import AbstractEnvironment, Environment
+from src.configuration import AbstractConfiguration, Configuration
 
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
@@ -11,10 +11,10 @@ from src.web_socket_message_handlers.command_processors.abstract_command_process
 class FirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(), 
-                 env: AbstractEnvironment = Environment()):
+                 config: AbstractConfiguration = Configuration('bot_main', 'config')):
+        self.__config = config
         self.__bot_controller = bot_controller
         self.__room_state = room_state
-        self.__env = env
 
     @property
     def keyword(self) -> str:
@@ -26,7 +26,7 @@ class FirstProcessor(AbstractCommandProcessor):
 
     def process(self, user_id: str, payload: Optional[str]) -> None:
         jqbx_first_request = json.loads(requests.get('%s/%s' % (
-                self.__env.get_jqbx_first_api(),
+                self.__config.get()['jqbx_first_api'],
                 self.__room_state.current_track['uri'])).text)
         firstDB = {
             'track_name': str(jqbx_first_request['track']['name']),
@@ -52,3 +52,32 @@ class FirstProcessor(AbstractCommandProcessor):
         if user_id == str(jqbx_first_request['user']['uri']).replace('spotify:user:',''):
             msg.append(':cake:')
         self.__bot_controller.chat(' '.join(msg))
+
+class AutoFirstProcessor(AbstractCommandProcessor):
+    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(), 
+                 config: AbstractConfiguration = Configuration('bot_main', 'config')):
+        self.__config = config
+        self.__bot_controller = bot_controller
+
+    @property
+    def keyword(self) -> str:
+        return 'auto-first'
+
+    @property
+    def help(self) -> str:
+        return 'Switch auto-first on every tune'
+
+    def process(self, user_id: str, payload: Optional[str]) -> None:
+        try:
+            if self.__config.get()['auto-first'] == True:
+                self.__config.set('auto-first', False)
+                return self.__bot_controller.chat('Auto-first deactivated')
+            elif self.__config.get()['auto-first'] == False:
+                self.__config.set('auto-first', True)
+                return self.__bot_controller.chat('Auto-first activated')
+            elif self.__config.get()['auto-first'] == None:
+                self.__config.set('auto-first', True)
+                return self.__bot_controller.chat('Auto-first activated')
+        except:
+            self.__config.set('auto-first', True)
+            return self.__bot_controller.chat('Auto-first activated')

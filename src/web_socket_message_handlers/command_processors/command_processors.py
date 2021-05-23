@@ -16,7 +16,7 @@ from src.web_socket_message_handlers.command_processors.urban import UrbanComman
 from src.web_socket_message_handlers.command_processors.charlixcx import CharlixcxCommandProcessor
 from src.web_socket_message_handlers.command_processors.yt import YtCommandProcessor
 from src.web_socket_message_handlers.command_processors.star import StarProcessor
-from src.web_socket_message_handlers.command_processors.first import FirstProcessor
+from src.web_socket_message_handlers.command_processors.first import FirstProcessor, AutoFirstProcessor
 from src.web_socket_message_handlers.command_processors.hay import HayProcessor
 from src.web_socket_message_handlers.command_processors.top_rooms import TopRoomsProcessor
 
@@ -36,6 +36,7 @@ command_processors: List[AbstractCommandProcessor] = [
     YtCommandProcessor(),
     StarProcessor(),
     FirstProcessor(),
+    AutoFirstProcessor(),
     HayProcessor(),
     TopRoomsProcessor()
     # ThemeCommandProcessor(),

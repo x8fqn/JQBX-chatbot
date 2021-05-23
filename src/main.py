@@ -1,5 +1,5 @@
 import time
-from src.env import AbstractEnvironment, Environment
+from src.configuration import Configuration, AbstractConfiguration
 from src.helpers import get_bot_user
 from src.logger import AbstractLogger, Logger
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
@@ -7,12 +7,16 @@ from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.web_socket_message_handlers import web_socket_message_handler_map
 
 
-def main(web_socket_client: AbstractWebSocketClient, env: AbstractEnvironment, logger: AbstractLogger):
+def main(web_socket_client: AbstractWebSocketClient, logger: AbstractLogger):
+    baseKeysReq = ('spotify_user_id', 'jqbx_room_id', 'jqbx_bot_display_name', 
+        'jqbx_bot_image_url', 'log_level')
+    config: AbstractConfiguration = Configuration('bot_main', 'config', baseKeysReq)
+
     def __on_open() -> None:
         logger.info('Websocket connection OPENED')
         web_socket_client.send(WebSocketMessage(label='join', payload={
-            'roomId': env.get_jqbx_room_id(),
-            'user': get_bot_user(env)
+            'roomId': config.get()['jqbx_room_id'] ,
+            'user': get_bot_user(config.get())
         }))
 
     def __on_message(message: WebSocketMessage) -> None:
@@ -40,7 +44,7 @@ def main(web_socket_client: AbstractWebSocketClient, env: AbstractEnvironment, l
 
 if __name__ == '__main__':
     while True:
-        main(WebSocketClient.get_instance(), Environment(), Logger())
+        main(WebSocketClient.get_instance(), Logger())
         try:
             print('[ALERT] Restarting. Send again to exit (5 sec.)')
             time.sleep(5)

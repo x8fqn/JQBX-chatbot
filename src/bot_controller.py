@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
-from src.env import AbstractEnvironment, Environment
+from src.configuration import AbstractConfiguration, Configuration
 from src.helpers import get_bot_user
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
 from src.web_socket_message import WebSocketMessage
@@ -56,11 +56,11 @@ class AbstractBotController(ABC):
 class BotController(AbstractBotController):
     __instance: Optional['BotController'] = None
 
-    def __init__(self, env: AbstractEnvironment = Environment(),
+    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', 'config'),
                  web_socket_client: AbstractWebSocketClient = WebSocketClient.get_instance()):
         if BotController.__instance:
             raise Exception('Use get_instance() instead!')
-        self.__env = env
+        self.__config = config
         self.__web_socket_client = web_socket_client
         self.__current_track: Optional[dict] = None
         self.__doped: bool = False
@@ -76,11 +76,11 @@ class BotController(AbstractBotController):
     def chat(self, message: Union[str, List[str]]) -> None:
         lines = message if isinstance(message, list) else [message]
         payload = {
-            'roomId': self.__env.get_jqbx_room_id(),
-            'user': get_bot_user(self.__env),
+            'roomId': self.__config.get()['jqbx_room_id'],
+            'user': get_bot_user(self.__config.get()),
             'message': {
                 'message': ' <br/> '.join(lines),
-                'user': get_bot_user(self.__env),
+                'user': get_bot_user(self.__config.get()),
                 'selectingEmoji': False
             }
         }
@@ -89,10 +89,10 @@ class BotController(AbstractBotController):
     def interroom_chat(self, room_id: str, username: str, message: str) -> None:
         payload = {
             'roomId': room_id,
-            'user': get_bot_user(self.__env),
+            'user': get_bot_user(self.__config.get()),
             'message': {
                 'message': message,
-                'user': get_bot_user(self.__env),
+                'user': get_bot_user(self.__config.get()),
                 'selectingEmoji': False
             }
         }
@@ -100,13 +100,13 @@ class BotController(AbstractBotController):
         self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
 
     def whisper(self, message: str, recipient: dict) -> None:
-        bot_user = get_bot_user(self.__env)
+        bot_user = get_bot_user(self.__config.get())
         payload = {
-            'roomId': self.__env.get_jqbx_room_id(),
+            'roomId': self.__config.get()['jqbx_room_id'],
             'user': bot_user,
             'message': {
                 'message': '@%s %s' % (recipient['username'], message),
-                'user': get_bot_user(self.__env),
+                'user': get_bot_user(self.__config.get()),
                 'recipients': [
                     recipient,
                     bot_user
@@ -120,8 +120,8 @@ class BotController(AbstractBotController):
         if self.__doped or self.__noped:
             return
         self.__web_socket_client.send(WebSocketMessage(label='thumbsUp', payload={
-            'roomId': self.__env.get_jqbx_room_id(),
-            'user': get_bot_user(self.__env)
+            'roomId': self.__config.get()['jqbx_room_id'],
+            'user': get_bot_user(self.__config.get())
         }))
         self.__doped = True
 
@@ -129,8 +129,8 @@ class BotController(AbstractBotController):
         if self.__doped or self.__noped:
             return
         self.__web_socket_client.send(WebSocketMessage(label='thumbsDown', payload={
-            'roomId': self.__env.get_jqbx_room_id(),
-            'user': get_bot_user(self.__env)
+            'roomId': self.__config.get()['jqbx_room_id'],
+            'user': get_bot_user(self.__config.get())
         }))
         self.__noped = True
 
@@ -138,8 +138,8 @@ class BotController(AbstractBotController):
         if self.__starred:
             return
         self.__web_socket_client.send(WebSocketMessage(label='starTrack', payload={
-            'roomId': self.__env.get_jqbx_room_id(),
-            'user': get_bot_user(self.__env)
+            'roomId': self.__config.get()['jqbx_room_id'],
+            'user': get_bot_user(self.__config.get())
         }))
         self.__starred = True
 

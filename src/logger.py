@@ -3,7 +3,7 @@ import traceback
 from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Union, Optional
-from src.env import Environment, AbstractEnvironment
+from src.configuration import AbstractConfiguration, Configuration
 
 # https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
 # Levels:
@@ -34,7 +34,8 @@ class AbstractLogger(ABC):
         pass
 
 class Logger(AbstractLogger):
-    def __init__(self, env: AbstractEnvironment = Environment()) -> None:
+    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', 'config')) -> None:
+        self.__config = config 
         self.__levels = (
             'EMERGENCY',
             'ALERT',
@@ -45,7 +46,10 @@ class Logger(AbstractLogger):
             'INFORMATIONAL',
             'DEBUG' 
         )
-        self.__envlevel = int(env.get_log_level())
+        try:
+            self.__envlevel = int(self.__config.get()['log_level'])
+        except:
+            self.__envlevel = 6
         
     def debug(self, context: str, data: Optional[Union[str, dict, list]] = None) -> None:
         __level = 7

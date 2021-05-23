@@ -47,8 +47,8 @@ In order for the AWS deployment to succeed, the repository should be configured 
 - [x] I think we need /first
 - [x] stability (auto-restarting improve)
 - [x] logging verbose level
+- [x] inter-room communication /hay (С)
 - [ ] /config
-- [ ] inter-room communication /hay (С)
 - [ ] link to last.fm for stats
 - [ ] tune of the month (top 10)
 
