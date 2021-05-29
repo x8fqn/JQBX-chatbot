@@ -39,10 +39,10 @@ class FirstProcessor(AbstractCommandProcessor):
             'stars': str(jqbx_first_request['track']['stars']) if 'stars' in jqbx_first_request['track'] else '0',
             'thumbsDown': str(jqbx_first_request['track']['thumbsDown']) if 'thumbsDown' in jqbx_first_request['track'] else '0'
         }
-        msg = ['[%s - %s] [Username: %s] [Date: %s] [Room: %s].' % (
+        msg = ['[%s — %s] [Username: %s] [Date: %s] [Room: %s]' % (
                 firstDB['track_name'], firstDB['artists'], firstDB['username'],
                 firstDB['startedAt'], firstDB['room_title']),
-            'It got %s upvote%s, %s star%s, and %s lame%s.' % (
+            '[%s upvote%s, %s star%s, %s lame%s]' % (
                 firstDB['thumbsUp'],
                 's' if int(firstDB['thumbsUp']) % 10 != 1 else '',
                 firstDB['stars'],
@@ -50,7 +50,7 @@ class FirstProcessor(AbstractCommandProcessor):
                 firstDB['thumbsDown'],
                 's' if int(firstDB['thumbsDown']) % 10 != 1 else '')]
         if user_id == str(jqbx_first_request['user']['uri']).replace('spotify:user:',''):
-            msg.append(':cake:')
+            msg.insert(0, ':cake:')
         self.__bot_controller.chat(' '.join(msg))
 
 class AutoFirstProcessor(AbstractCommandProcessor):

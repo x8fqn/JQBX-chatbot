@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from src.bot_controller import BotController, AbstractBotController
+from src.logger import AbstractLogger, Logger
 
 
 class AbstractRoomState(ABC):
@@ -54,7 +55,7 @@ class AbstractRoomState(ABC):
 class RoomState(AbstractRoomState):
     __instance: Optional['RoomState'] = None
 
-    def __init__(self, bot_controller: AbstractBotController):
+    def __init__(self, bot_controller: AbstractBotController, logger: AbstractLogger = Logger()):
         if RoomState.__instance:
             raise Exception('Use get_instance() instead!')
         self.__mod_ids: List[str] = []
@@ -63,6 +64,7 @@ class RoomState(AbstractRoomState):
         self.__current_track: Optional[dict] = None
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
+        self.__logger = logger
         RoomState.__instance = self
 
     @staticmethod
@@ -105,4 +107,6 @@ class RoomState(AbstractRoomState):
         self.__bot_controller.reset_vote()
 
     def set_room_title(self, room_title: str) -> None:
-        self.__room_title = room_title
+        if self.__room_title != room_title:
+            self.__room_title = room_title
+            self.__logger.info('Room title changed: %s' % room_title)

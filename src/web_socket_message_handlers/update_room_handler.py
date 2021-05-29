@@ -58,4 +58,3 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         room_title = payload.get('title')
         if room_title:
             self.__room_state.set_room_title(room_title)
-            self.__logger.info('Room title changed: %s' % room_title)

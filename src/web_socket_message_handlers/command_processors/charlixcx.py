@@ -1,4 +1,7 @@
-import random
+import random, sqlite3, os, sys
+from src.helpers import get_main_dir
+from sqlite3 import connect
+from datetime import datetime
 from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
@@ -18,22 +21,40 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
         return 'Bring me the pictures of Charli XCX immediately!'
 
     def process(self, user_id: str, payload: Optional[str]) -> None:
-        gifs: List[str] = [
-            'https://media2.giphy.com/media/LrGH9gVJF4DEr13oZX/giphy.gif',
-            'https://media3.giphy.com/media/gfC7XmjcakaaWcBNiI/giphy.gif',
-            'https://media3.giphy.com/media/l3vRgsqe79vhMHeJq/giphy.gif',
-            'https://media0.giphy.com/media/SvFFTQE2lD6TWKwV2M/giphy.gif',
-            'https://media4.giphy.com/media/Xy7LMINKRKRHNTejqF/giphy.gif',
-            'https://media4.giphy.com/media/gK6QUfpZzbgaDegFnP/giphy.gif',
-            'https://media3.giphy.com/media/iH29zOShq2xmoqvYgf/giphy.gif',
-            'https://media3.giphy.com/media/RhN0KtlPERCOy5n8S1/giphy.gif',
-            'https://media2.giphy.com/media/Wt0ThupWkMnGFng4fl/giphy.gif',
-            'https://media3.giphy.com/media/5h5zAh85EEAIfjo926/giphy.gif',
-            'https://media4.giphy.com/media/KH3JkhMhCMdt9G7O9Z/giphy.gif',
-            'https://media1.giphy.com/media/Q8lTHW7pGq3eoWi35I/giphy.gif',
-            'https://media4.giphy.com/media/RGdtnD2LNFrVM4Zv5N/giphy.gif',
-            'https://media2.giphy.com/media/TIR9f2CfySlFplAoSA/giphy.gif',
-            'https://media1.giphy.com/media/zf0ZBORj3ukDu/giphy.gif'
-        ]
-        random.shuffle(gifs)
-        self.__bot_controller.chat(random.choice(gifs))
+        path = os.path.join(get_main_dir(), '..', 'config', 'gifs.sqlite')
+        connection = connect(path)
+        connection.execute('''
+            CREATE TABLE IF NOT EXISTS charlixcx (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp INTEGER,
+                publisher_id TEXT,
+                url TEXT
+        )''')
+        if payload != None:
+            payload = payload.strip().split()
+            if payload[0] in {'add'}:
+                if len(payload) > 1 and payload[1] != None:
+                    if payload[1].startswith(('http://','https://')) and payload[1].endswith('.gif'):
+                        gif_url = payload[1]
+                        self.add(connection, gif_url, user_id)
+                        self.__bot_controller.chat('The gif has been added to the database :+1:')            
+                    else:
+                        self.__bot_controller.chat('Usage: /charlixcx add [url]')
+                else:
+                    self.__bot_controller.chat('Incorrect link')
+        else:
+            self.__bot_controller.chat(self.get_random(connection)) 
+        connection.close()
+
+    def add(self, connection: sqlite3.Connection, url: str, publisher_id: str) -> None:
+        cursor = connection.cursor()
+        cursor.execute('INSERT INTO charlixcx (timestamp, publisher_id, url) VALUES (?, ?, ?)',
+        (datetime.now().timestamp(), publisher_id, url))
+        connection.commit()
+        cursor.close()
+        
+    def get_random(self, connection: sqlite3.Connection) -> str:
+        cursor = connection.cursor()
+        result = cursor.execute('SELECT url FROM charlixcx ORDER BY RANDOM() LIMIT 1').fetchall()
+        cursor.close()
+        return str(result[0][0])
