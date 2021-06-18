@@ -12,10 +12,12 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
                  config: AbstractConfiguration = Configuration('bot_main', 'config'),
+                 welcome_config: AbstractConfiguration = Configuration('welcome','config'),
                  logger: AbstractLogger = Logger()):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
         self.__config = config
+        self.__welcome_config = welcome_config
         self.__logger = logger
 
     @property
@@ -44,8 +46,16 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
                 if x['id'] != self.__config.get()['spotify_user_id']
                    and x['id'] not in [y['id'] for y in self.__room_state.users]
             ]
+
         if 'users' in payload:
             self.__room_state.set_users(users)
+
+        self.__welcome_config.update()
+        if self.__welcome_config.get()['enabled'] == True:
+            if 'new_users' in locals():
+                for user in new_users:
+                    self.__bot_controller.whisper(self.__welcome_config.get()['message'], user)
+
         if 'djs' in payload:
             self.__room_state.set_djs(djs)
 

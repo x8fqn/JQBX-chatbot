@@ -105,7 +105,7 @@ class BotController(AbstractBotController):
             'roomId': self.__config.get()['jqbx_room_id'],
             'user': bot_user,
             'message': {
-                'message': '@%s %s' % (recipient['username'], message),
+                'message': '%s' % message,
                 'user': get_bot_user(self.__config.get()),
                 'recipients': [
                     recipient,

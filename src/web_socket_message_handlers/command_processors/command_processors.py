@@ -19,6 +19,7 @@ from src.web_socket_message_handlers.command_processors.star import StarProcesso
 from src.web_socket_message_handlers.command_processors.first import FirstProcessor, AutoFirstProcessor
 from src.web_socket_message_handlers.command_processors.hay import HayProcessor
 from src.web_socket_message_handlers.command_processors.top_rooms import TopRoomsProcessor
+from src.web_socket_message_handlers.command_processors.config import ConfigProcessor
 
 
 command_processors: List[AbstractCommandProcessor] = [
@@ -38,7 +39,8 @@ command_processors: List[AbstractCommandProcessor] = [
     FirstProcessor(),
     AutoFirstProcessor(),
     HayProcessor(),
-    TopRoomsProcessor()
+    TopRoomsProcessor(),
+    ConfigProcessor()
     # ThemeCommandProcessor(),
     # RelinkCommandProcessor()
 ]

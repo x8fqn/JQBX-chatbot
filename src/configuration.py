@@ -16,7 +16,7 @@ class AbstractConfiguration(ABC):
         pass
 
     @abstractmethod
-    def set(self, key: str, data: Union[List, str]) -> bool:
+    def set(self, key: str, data: Union[List, int, str, bool]) -> bool:
         pass
 
     @abstractmethod

@@ -37,9 +37,7 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         keyword = parts[0].lower().split('/', 1)[-1]
         payload = None if len(parts) == 1 else parts[1]
 
+        self.__logger.info('%s called by %s' % (repr(parts), user_id))
         command_processor = self.__command_processors.get(keyword)
         if command_processor:
             command_processor.process(user_id, payload)
-        self.__logger.info('%s by %s processed' % (
-            repr(parts), user_id
-        ))

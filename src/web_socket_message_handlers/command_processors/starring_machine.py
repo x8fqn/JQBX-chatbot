@@ -17,17 +17,15 @@ class StarringMachine:
         if not self.__room_state.current_track:
             return
         if self.__room_state.djs[0]['id'] == user_id:
-            self.__bot_controller.chat('You can\'t vote for yourself')
-            return
+            return self.__bot_controller.chat('You can\'t vote for yourself')
+            
         if self.__bot_controller.starred:
-            self.__bot_controller.chat('I\'m already starred this')
-            return
+            return self.__bot_controller.chat('I\'m already starred this')
         if self.__current_track is None or self.__current_track['id'] != self.__room_state.current_track['id']:
             self.__current_track = self.__room_state.current_track
             self.__voter_ids = []
         if user_id in self.__voter_ids:
-            self.__bot_controller.chat('You\'ve already voted to star this')
-            return
+            return self.__bot_controller.chat('You\'ve already voted to star this')
         self.__voter_ids.append(user_id)
         voter_count = len(self.__voter_ids)
         if voter_count <= 2:
