@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from src.bot_controller import BotController, AbstractBotController
-from src.logger import AbstractLogger, Logger
+from bot_controller import BotController, AbstractBotController
+from logger import AbstractLogger, Logger
 
 
 class AbstractRoomState(ABC):

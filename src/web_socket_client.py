@@ -4,8 +4,8 @@ from typing import Callable, Optional, Any
 
 from websocket import WebSocketApp
 
-from src.logger import AbstractLogger, Logger
-from src.web_socket_message import WebSocketMessage
+from logger import AbstractLogger, Logger
+from web_socket_message import WebSocketMessage
 
 
 class AbstractWebSocketClient(ABC):

@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from src.test_utils.fake_environment import FakeEnvironment
-from src.test_utils.fake_web_socket_client import FakeWebSocketClient
-from src.web_socket_message import WebSocketMessage
-from src.web_socket_message_handlers.keep_awake_handler import KeepAwakeHandler
+from test_utils.fake_environment import FakeEnvironment
+from test_utils.fake_web_socket_client import FakeWebSocketClient
+from web_socket_message import WebSocketMessage
+from web_socket_message_handlers.keep_awake_handler import KeepAwakeHandler
 
 
 class KeepAwakeHandlerTest(TestCase):

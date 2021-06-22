@@ -1,7 +1,7 @@
 from typing import Optional, List, Callable
 
-from src.bot_controller import AbstractBotController, BotController
-from src.room_state import AbstractRoomState, RoomState
+from bot_controller import AbstractBotController, BotController
+from room_state import AbstractRoomState, RoomState
 
 
 class VotingMachine:

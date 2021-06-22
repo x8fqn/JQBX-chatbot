@@ -1,11 +1,11 @@
 import random, sqlite3, os, sys
-from src.helpers import get_main_dir
+from helpers import get_main_dir
 from sqlite3 import connect
 from datetime import datetime
 from typing import Optional, List
 
-from src.bot_controller import AbstractBotController, BotController
-from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from bot_controller import AbstractBotController, BotController
+from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 
 
 class CharlixcxCommandProcessor(AbstractCommandProcessor):

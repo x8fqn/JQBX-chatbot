@@ -1,10 +1,10 @@
 from typing import List, Dict
 
-from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
-from src.web_socket_message_handlers.keep_awake_handler import KeepAwakeHandler
-from src.web_socket_message_handlers.play_track_handler import PlayTrackHandler
-from src.web_socket_message_handlers.push_message_handler import PushMessageHandler
-from src.web_socket_message_handlers.update_room_handler import UpdateRoomHandler
+from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from web_socket_message_handlers.keep_awake_handler import KeepAwakeHandler
+from web_socket_message_handlers.play_track_handler import PlayTrackHandler
+from web_socket_message_handlers.push_message_handler import PushMessageHandler
+from web_socket_message_handlers.update_room_handler import UpdateRoomHandler
 
 web_socket_message_handlers: List[AbstractWebSocketMessageHandler] = [
     KeepAwakeHandler(),

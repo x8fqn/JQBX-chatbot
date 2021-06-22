@@ -17,11 +17,11 @@ class AbstractJQBXAPI(ABC):
         pass
 
     @abstractmethod
-    def roomsActive(page: int = 0) -> dict:
+    def roomsActive(page = 0) -> dict:
         pass
 
     @abstractmethod
-    def roomsAll(page: int = 0) -> dict:
+    def roomsAll(page: int) -> dict:
         pass
         
     @abstractmethod
@@ -41,7 +41,7 @@ class JQBXAPI(AbstractJQBXAPI):
     def room(room_id: str) -> dict:
         return requests.get('https://jqbx.fm/room/%s' % room_id).json()
 
-    def roomsActive(page: int = 0) -> dict:
+    def roomsActive(page = 0) -> dict:
         return requests.get('https://jqbx.fm/active-rooms/%s' % str(page)).json()
 
     def roomsAll(page: int = 0) -> dict:

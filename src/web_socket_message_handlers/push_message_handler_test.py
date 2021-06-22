@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from src.test_utils.fake_command_processor import FakeCommandProcessor
-from src.test_utils.fake_environment import FakeEnvironment
-from src.web_socket_message import WebSocketMessage
-from src.web_socket_message_handlers.push_message_handler import PushMessageHandler
+from test_utils.fake_command_processor import FakeCommandProcessor
+from test_utils.fake_environment import FakeEnvironment
+from web_socket_message import WebSocketMessage
+from web_socket_message_handlers.push_message_handler import PushMessageHandler
 
 
 class PushMessageHandlerTest(TestCase):

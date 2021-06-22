@@ -2,12 +2,12 @@ import copy
 from typing import List
 from unittest import TestCase
 
-from src.room_state import RoomState
-from src.test_utils.fake_bot_controller import FakeBotController
-from src.test_utils.fake_data_service import FakeDataService
-from src.test_utils.test_helpers import create_random_id_object
-from src.web_socket_message import WebSocketMessage
-from src.web_socket_message_handlers.update_room_handler import UpdateRoomHandler
+from room_state import RoomState
+from test_utils.fake_bot_controller import FakeBotController
+from test_utils.fake_data_service import FakeDataService
+from test_utils.test_helpers import create_random_id_object
+from web_socket_message import WebSocketMessage
+from web_socket_message_handlers.update_room_handler import UpdateRoomHandler
 
 
 class UpdateRoomHandlerTest(TestCase):

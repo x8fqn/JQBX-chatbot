@@ -1,6 +1,6 @@
-from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
-from src.web_socket_message import WebSocketMessage
-from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from web_socket_client import AbstractWebSocketClient, WebSocketClient
+from web_socket_message import WebSocketMessage
+from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
 
 
 class KeepAwakeHandler(AbstractWebSocketMessageHandler):

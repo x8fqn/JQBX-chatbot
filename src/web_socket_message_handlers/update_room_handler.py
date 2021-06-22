@@ -1,18 +1,18 @@
 from typing import List
 
-from src.bot_controller import AbstractBotController, BotController
-from src.configuration import AbstractConfiguration, Configuration
-from src.room_state import AbstractRoomState, RoomState
-from src.web_socket_message import WebSocketMessage
-from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
-from src.logger import AbstractLogger, Logger
+from bot_controller import AbstractBotController, BotController
+from configuration import AbstractConfiguration, Configuration
+from room_state import AbstractRoomState, RoomState
+from web_socket_message import WebSocketMessage
+from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from logger import AbstractLogger, Logger
 
 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
-                 config: AbstractConfiguration = Configuration('bot_main', 'config'),
-                 welcome_config: AbstractConfiguration = Configuration('welcome','config'),
+                 config: AbstractConfiguration = Configuration('bot_main', '../config'),
+                 welcome_config: AbstractConfiguration = Configuration('welcome','../config'),
                  logger: AbstractLogger = Logger()):
         self.__bot_controller = bot_controller
         self.__room_state = room_state

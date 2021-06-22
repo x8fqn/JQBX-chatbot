@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.web_socket_message import WebSocketMessage
+from web_socket_message import WebSocketMessage
 
 
 class AbstractWebSocketMessageHandler(ABC):

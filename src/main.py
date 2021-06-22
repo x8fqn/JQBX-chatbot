@@ -1,16 +1,16 @@
 import time
-from src.configuration import Configuration, AbstractConfiguration
-from src.helpers import get_bot_user
-from src.logger import AbstractLogger, Logger
-from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
-from src.web_socket_message import WebSocketMessage
-from src.web_socket_message_handlers.web_socket_message_handlers import web_socket_message_handler_map
+from configuration import Configuration, AbstractConfiguration
+from helpers import get_bot_user
+from logger import AbstractLogger, Logger
+from web_socket_client import AbstractWebSocketClient, WebSocketClient
+from web_socket_message import WebSocketMessage
+from web_socket_message_handlers.web_socket_message_handlers import web_socket_message_handler_map
 
 
 def main(web_socket_client: AbstractWebSocketClient, logger: AbstractLogger):
     baseKeysReq = ('spotify_user_id', 'jqbx_room_id', 'jqbx_bot_display_name', 
         'jqbx_bot_image_url', 'log_level')
-    config: AbstractConfiguration = Configuration('bot_main', 'config', baseKeysReq)
+    config: AbstractConfiguration = Configuration('bot_main', '../config', baseKeysReq)
 
     def __on_open() -> None:
         logger.info('Websocket connection OPENED')

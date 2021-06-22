@@ -1,8 +1,8 @@
 from typing import Optional, Dict, List
 
-from src.bot_controller import AbstractBotController, BotController
-from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from src.web_socket_message_handlers.command_processors.command_processors import command_processors
+from bot_controller import AbstractBotController, BotController
+from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from web_socket_message_handlers.command_processors.command_processors import command_processors
 
 
 class HelpCommandProcessor(AbstractCommandProcessor):

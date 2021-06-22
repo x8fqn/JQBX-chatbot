@@ -1,15 +1,15 @@
-from src.configuration import Configuration, AbstractConfiguration
+from configuration import Configuration, AbstractConfiguration
 from typing import Optional, List
 
-from src.bot_controller import AbstractBotController, BotController
-from src.room_state import AbstractRoomState, RoomState
-from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from bot_controller import AbstractBotController, BotController
+from room_state import AbstractRoomState, RoomState
+from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 
 
 class ConfigProcessor(AbstractCommandProcessor):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
                  bot_controller: AbstractBotController = BotController.get_instance(),
-                 config: AbstractConfiguration = Configuration('welcome', 'config')):
+                 config: AbstractConfiguration = Configuration('welcome', '../config')):
         self.__room_state = room_state
         self.__bot_controller = bot_controller
         self.__config = config

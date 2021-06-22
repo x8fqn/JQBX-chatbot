@@ -1,6 +1,6 @@
 from typing import Optional, List, Union
 
-from src.bot_controller import AbstractBotController
+from bot_controller import AbstractBotController
 
 
 class FakeBotController(AbstractBotController):

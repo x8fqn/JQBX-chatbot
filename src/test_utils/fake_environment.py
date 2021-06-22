@@ -1,4 +1,4 @@
-from src.env import AbstractEnvironment
+from env import AbstractEnvironment
 
 
 class FakeEnvironment(AbstractEnvironment):

@@ -3,7 +3,7 @@ from typing import Optional, Dict, List
 
 import requests
 
-from src.env import AbstractEnvironment, Environment
+from env import AbstractEnvironment, Environment
 
 
 class AbstractDataService(ABC):

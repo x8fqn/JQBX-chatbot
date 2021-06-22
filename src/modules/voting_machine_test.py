@@ -1,10 +1,10 @@
 from typing import List
 from unittest import TestCase
 
-from src.room_state import RoomState
-from src.test_utils.fake_bot_controller import FakeBotController
-from src.test_utils.test_helpers import create_random_id_object, create_random_string
-from src.web_socket_message_handlers.command_processors.voting_machine import VotingMachine
+from room_state import RoomState
+from test_utils.fake_bot_controller import FakeBotController
+from test_utils.test_helpers import create_random_id_object, create_random_string
+from modules.voting_machine import VotingMachine
 
 
 class VotingMachineTest(TestCase):

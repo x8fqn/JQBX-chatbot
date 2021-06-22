@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
-from src.configuration import AbstractConfiguration, Configuration
-from src.helpers import get_bot_user
-from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
-from src.web_socket_message import WebSocketMessage
+from configuration import AbstractConfiguration, Configuration
+from helpers import get_bot_user
+from web_socket_client import AbstractWebSocketClient, WebSocketClient
+from web_socket_message import WebSocketMessage
 
 
 class AbstractBotController(ABC):
@@ -56,7 +56,7 @@ class AbstractBotController(ABC):
 class BotController(AbstractBotController):
     __instance: Optional['BotController'] = None
 
-    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', 'config'),
+    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', '../config'),
                  web_socket_client: AbstractWebSocketClient = WebSocketClient.get_instance()):
         if BotController.__instance:
             raise Exception('Use get_instance() instead!')

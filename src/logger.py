@@ -3,7 +3,7 @@ import traceback
 from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Union, Optional
-from src.configuration import AbstractConfiguration, Configuration
+from configuration import AbstractConfiguration, Configuration
 
 # https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
 # Levels:
@@ -34,7 +34,7 @@ class AbstractLogger(ABC):
         pass
 
 class Logger(AbstractLogger):
-    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', 'config')) -> None:
+    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', '../config')) -> None:
         self.__config = config 
         self.__levels = (
             'EMERGENCY',
