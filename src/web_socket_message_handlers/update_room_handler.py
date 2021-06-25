@@ -10,15 +10,12 @@ from logger import AbstractLogger, Logger
 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-                 room_state: AbstractRoomState = RoomState.get_instance(),
-                 config: AbstractConfiguration = Configuration('bot_main', '../config'),
-                 welcome_config: AbstractConfiguration = Configuration('welcome','../config'),
-                 logger: AbstractLogger = Logger()):
+                 room_state: AbstractRoomState = RoomState.get_instance()):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
-        self.__config = config
-        self.__welcome_config = welcome_config
-        self.__logger = logger
+        self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
+        self.__welcome_config: AbstractConfiguration = Configuration('welcome','../config')
+        self.__logger: AbstractLogger = Logger()
 
     @property
     def message_label(self) -> str:
@@ -27,9 +24,10 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def handle(self, message: WebSocketMessage) -> None:
         payload = message.payload
         self.__update_mod_ids(payload)
-        self.__update_users(message.payload)
-        self.__update_track(payload)
+        self.__update_users(payload)
         self.__update_room_title(payload)
+        self.__initial_track_update(payload)
+        self.__update_votes(payload)
 
     def __update_mod_ids(self, payload: dict) -> None:
         admins = payload.get('admin', [])
@@ -42,9 +40,9 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         djs: List[dict] = payload.get('djs', [])
         if self.__room_state.users:
             new_users = [
-                x for x in users
-                if x['id'] != self.__config.get()['spotify_user_id']
-                   and x['id'] not in [y['id'] for y in self.__room_state.users]
+                user for user in users
+                if user['id'] != self.__config.get()['spotify_user_id']
+                   and user['id'] not in [y['id'] for y in self.__room_state.users]
             ]
 
         if 'users' in payload:
@@ -59,7 +57,7 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         if 'djs' in payload:
             self.__room_state.set_djs(djs)
 
-    def __update_track(self, payload: dict) -> None:
+    def __initial_track_update(self, payload: dict) -> None:
         tracks = payload.get('tracks', [])
         if tracks:
             self.__room_state.set_current_track(tracks[0])
@@ -68,3 +66,18 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         room_title = payload.get('title')
         if room_title:
             self.__room_state.set_room_title(room_title)
+
+    def __update_votes(self, payload: dict) -> None:
+        if 'currentTrack' not in payload.values():
+            return
+        payload = payload.get('currentTrack')
+        thumbUp_count = payload.get('thumbsUp')
+        thumbDown_count = payload.get('thumbsDown')
+        star_count = payload.get('stars')
+        if not thumbUp_count:
+            thumbUp_count = 0
+        if not thumbDown_count:
+            thumbDown_count = 0
+        if not star_count:
+            star_count = 0
+        self.__room_state.set_votes(thumbUp_count, thumbDown_count, star_count)

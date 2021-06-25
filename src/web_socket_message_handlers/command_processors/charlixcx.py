@@ -37,7 +37,7 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
                     if payload[1].startswith(('http://','https://')) and payload[1].endswith('.gif'):
                         gif_url = payload[1]
                         self.add(connection, gif_url, user_id)
-                        self.__bot_controller.chat('The gif has been added to the database :+1:')            
+                        self.__bot_controller.chat('Gif has been added :+1:')            
                     else:
                         self.__bot_controller.chat('Usage: /charlixcx add [url]')
                 else:

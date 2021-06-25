@@ -54,9 +54,8 @@ class FirstProcessor(AbstractCommandProcessor):
         self.__bot_controller.chat(' '.join(msg))
 
 class AutoFirstProcessor(AbstractCommandProcessor):
-    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(), 
-                 config: AbstractConfiguration = Configuration('bot_main', 'config')):
-        self.__config = config
+    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance()):
+        self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
         self.__bot_controller = bot_controller
 
     @property

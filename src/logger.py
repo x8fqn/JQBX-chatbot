@@ -34,8 +34,8 @@ class AbstractLogger(ABC):
         pass
 
 class Logger(AbstractLogger):
-    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', '../config')) -> None:
-        self.__config = config 
+    def __init__(self) -> None:
+        self.__config: AbstractConfiguration = Configuration('bot_main', '../config') 
         self.__levels = (
             'EMERGENCY',
             'ALERT',

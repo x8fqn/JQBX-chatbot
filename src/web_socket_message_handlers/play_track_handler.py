@@ -5,12 +5,10 @@ from logger import AbstractLogger, Logger
 from configuration import AbstractConfiguration, Configuration
 from web_socket_message_handlers.command_processors.first import FirstProcessor
 class PlayTrackHandler(AbstractWebSocketMessageHandler):
-    def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
-                logger: AbstractLogger = Logger(),
-                config: AbstractConfiguration = Configuration('bot_main', '../config')):
+    def __init__(self, room_state: AbstractRoomState = RoomState.get_instance()):
         self.__room_state = room_state
-        self.__logger = logger
-        self.__config = config
+        self.__logger: AbstractLogger = Logger()
+        self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
 
     @property
     def message_label(self) -> str:

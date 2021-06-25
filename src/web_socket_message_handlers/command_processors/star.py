@@ -26,4 +26,4 @@ class StarProcessor(AbstractCommandProcessor):
 
     def __star(self, bot_controller: AbstractBotController) -> None:
         bot_controller.star()
-        bot_controller.chat(['That big star is for you', 'https://i.gifer.com/ZNec.gif'])
+        bot_controller.chat('That big star is for you https://i.gifer.com/ZNec.gif')

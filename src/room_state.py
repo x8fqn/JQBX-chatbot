@@ -1,8 +1,12 @@
+import os
+from helpers import get_main_dir
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from bot_controller import BotController, AbstractBotController
-from logger import AbstractLogger, Logger
+from logger import Logger, AbstractLogger
+from track_history import TrackLogger
+from dateutil import parser
 
 
 class AbstractRoomState(ABC):
@@ -31,6 +35,10 @@ class AbstractRoomState(ABC):
     def current_track(self) -> Optional[dict]:
         pass
 
+    @property
+    def votes(self) -> Optional[dict]:
+        pass
+    
     @abstractmethod
     def set_room_title(self, room_title: str) -> None:
         pass
@@ -51,6 +59,10 @@ class AbstractRoomState(ABC):
     def set_current_track(self, current_track: dict) -> None:
         pass
 
+    @abstractmethod
+    def set_votes(self, thumbsUp: int, thumbsDown: int, stars: int) -> None:
+        pass
+
 
 class RoomState(AbstractRoomState):
     __instance: Optional['RoomState'] = None
@@ -62,9 +74,14 @@ class RoomState(AbstractRoomState):
         self.__users: List[dict] = []
         self.__djs: List[dict] = []
         self.__current_track: Optional[dict] = None
+        self.__thumbUp_count: int = None
+        self.__thumbDown_count: int = None
+        self.__star_count: int = None
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
         self.__logger = logger
+        self.__track_logger = TrackLogger()
+        self.__track_logger.connect(os.path.join(get_main_dir(), '..', 'config', 'track_history.sqlite'))
         RoomState.__instance = self
 
     @staticmethod
@@ -93,6 +110,14 @@ class RoomState(AbstractRoomState):
     def current_track(self) -> Optional[dict]:
         return self.__current_track
 
+    @property
+    def votes(self) -> Optional[dict]:
+        return {
+            'thumbUp': self.__thumbUp_count,
+            'thumbDown': self.__thumbDown_count,
+            'star': self.__star_count
+        }
+
     def set_mod_ids(self, mod_ids: List[str]) -> None:
         self.__mod_ids = mod_ids
 
@@ -104,9 +129,20 @@ class RoomState(AbstractRoomState):
 
     def set_current_track(self, current_track: dict) -> None:
         self.__current_track = current_track
+        self.__track_logger.add_track(self.__current_track['name'],
+            ", ".join([i['name'] for i in self.__current_track['artists']]),
+            self.__current_track['uri'], parser.parse(self.__current_track['startedAt']).timestamp(),
+            self.__current_track['userUri'])
         self.__bot_controller.reset_vote()
 
     def set_room_title(self, room_title: str) -> None:
         if self.__room_title != room_title:
             self.__room_title = room_title
             self.__logger.info('Room title changed: %s' % room_title)
+
+    def set_votes(self, thumbUp_count: int, thumbDown_count: int, star_count: int) -> None:
+        self.__thumbUp_count = thumbUp_count
+        self.__thumbDown_count = thumbDown_count
+        self.__star_count = star_count
+        self.__track_logger.update_track_votes(parser.parse(self.__current_track['startedAt']).timestamp(), 
+            self.__thumbUp_count, self.__thumbDown_count, self.__star_count)
