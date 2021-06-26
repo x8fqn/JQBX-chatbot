@@ -1,3 +1,4 @@
+import logging
 from typing import List, Dict
 
 from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
@@ -6,15 +7,12 @@ from web_socket_message_handlers.command_processors.help import HelpCommandProce
 from configuration import AbstractConfiguration, Configuration
 from web_socket_message import WebSocketMessage
 from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
-from logger import Logger, AbstractLogger
 
 
 class PushMessageHandler(AbstractWebSocketMessageHandler):
     def __init__(self, config: AbstractConfiguration = Configuration('bot_main', '../config'),
-                 logger: AbstractLogger = Logger(),
                  _command_processors: List[AbstractCommandProcessor] = None):
         self.__config = config
-        self.__logger = logger
         self.__command_processors: Dict[str, AbstractCommandProcessor] = {
             x.keyword: x for x in _command_processors or (command_processors + [HelpCommandProcessor()])
         }
@@ -36,7 +34,7 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         keyword = parts[0].lower().split('/', 1)[-1]
         payload = None if len(parts) == 1 else parts[1]
 
-        self.__logger.info('%s called by %s' % (repr(parts), user_id))
+        logging.info('%s called by %s' % (repr(parts), user_id))
         command_processor = self.__command_processors.get(keyword)
         if command_processor:
             command_processor.process(user_id, payload)

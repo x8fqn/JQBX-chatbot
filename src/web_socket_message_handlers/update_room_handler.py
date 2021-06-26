@@ -5,7 +5,6 @@ from configuration import AbstractConfiguration, Configuration
 from room_state import AbstractRoomState, RoomState
 from web_socket_message import WebSocketMessage
 from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
-from logger import AbstractLogger, Logger
 
 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
@@ -15,7 +14,6 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         self.__room_state = room_state
         self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
         self.__welcome_config: AbstractConfiguration = Configuration('welcome','../config')
-        self.__logger: AbstractLogger = Logger()
 
     @property
     def message_label(self) -> str:

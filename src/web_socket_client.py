@@ -1,10 +1,8 @@
-import json
+import logging, json
 from abc import ABC, abstractmethod
 from typing import Callable, Optional, Any
 
 from websocket import WebSocketApp
-
-from logger import AbstractLogger, Logger
 from web_socket_message import WebSocketMessage
 
 
@@ -26,11 +24,10 @@ class AbstractWebSocketClient(ABC):
 class WebSocketClient(AbstractWebSocketClient):
     __instance: Optional['WebSocketClient'] = None
 
-    def __init__(self, logger: AbstractLogger = Logger()):
+    def __init__(self):
         if WebSocketClient.__instance:
             raise Exception('Use get_instance() instead!')
         self.__ws = WebSocketApp('wss://jqbx.fm/socket.io/?EIO=3&transport=websocket')
-        self.__logger = logger
         WebSocketClient.__instance = self
 
     @staticmethod
@@ -48,7 +45,7 @@ class WebSocketClient(AbstractWebSocketClient):
         self.__ws.run_forever()
 
     def send(self, web_socket_message: WebSocketMessage) -> None:
-        self.__logger.debug('Outgoing Message', web_socket_message.as_dict())
+        logging.debug('Outgoing Message: %s' % repr(web_socket_message.as_dict()))
         serialized = str(web_socket_message.code)
         array_part = [x for x in [web_socket_message.label, web_socket_message.payload] if x]
         if array_part:

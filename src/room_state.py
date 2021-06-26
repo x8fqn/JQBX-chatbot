@@ -1,10 +1,9 @@
-import os
+import logging, os
 from helpers import get_main_dir
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from bot_controller import BotController, AbstractBotController
-from logger import Logger, AbstractLogger
 from track_history import TrackLogger
 from dateutil import parser
 
@@ -67,7 +66,7 @@ class AbstractRoomState(ABC):
 class RoomState(AbstractRoomState):
     __instance: Optional['RoomState'] = None
 
-    def __init__(self, bot_controller: AbstractBotController, logger: AbstractLogger = Logger()):
+    def __init__(self, bot_controller: AbstractBotController):
         if RoomState.__instance:
             raise Exception('Use get_instance() instead!')
         self.__mod_ids: List[str] = []
@@ -79,7 +78,6 @@ class RoomState(AbstractRoomState):
         self.__star_count: int = None
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
-        self.__logger = logger
         self.__track_logger = TrackLogger()
         self.__track_logger.connect(os.path.join(get_main_dir(), '..', 'config', 'track_history.sqlite'))
         RoomState.__instance = self
@@ -138,7 +136,7 @@ class RoomState(AbstractRoomState):
     def set_room_title(self, room_title: str) -> None:
         if self.__room_title != room_title:
             self.__room_title = room_title
-            self.__logger.info('Room title changed: %s' % room_title)
+            logging.info('Room title changed: %s' % room_title , )
 
     def set_votes(self, thumbUp_count: int, thumbDown_count: int, star_count: int) -> None:
         self.__thumbUp_count = thumbUp_count
