@@ -1,10 +1,11 @@
 import os, io, json 
 from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
+from src.helpers import get_config_path
 
 class AbstractConfiguration(ABC):
     @abstractmethod
-    def get(self) -> dict:
+    def get(self, key: str = None):
         pass
 
     @abstractmethod
@@ -24,13 +25,11 @@ class AbstractConfiguration(ABC):
         pass
 
 class Configuration(AbstractConfiguration):
-    def __init__(self, name: str, path: str, baseKeysReq: tuple = None) -> None:
+    def __init__(self, name: str) -> None:
         self.__name = name
-        self.__path = path
+        self.__path = get_config_path()
         self.__filename = self.__name + '.json'
         self.__config = dict
-        if baseKeysReq != None:
-            self.__baseKeysReq = baseKeysReq
         if not self.__path.endswith(os.sep):
             self.__path += os.sep 
         if not os.path.exists(self.__path):
@@ -41,11 +40,6 @@ class Configuration(AbstractConfiguration):
             
     def __init_config(self) -> None:
         init_conf = {'module_name': self.__name}
-        try:
-            for key in self.__baseKeysReq:
-                init_conf.update({key : 'SET THIS FIELD'})
-        except:
-            pass
         with io.open(self.__path + self.__filename, 'w') as handle:
             handle.write(json.dumps(init_conf, indent=4)) 
         self.__read()
@@ -58,9 +52,11 @@ class Configuration(AbstractConfiguration):
         with io.open(self.__path + self.__filename, 'r') as handle:
             self.__config = json.loads(handle.read())
 
-    def get(self) -> dict:
-        """ Get the config as `dict` type """
-        return self.__config
+    def get(self, key: str = None):
+        """ Get the config as `dict` type if key in not defined"""
+        if key == None:
+            return self.__config
+        return self.__config.get(key)
     
     def update(self) -> dict:
         self.__read()
@@ -68,7 +64,7 @@ class Configuration(AbstractConfiguration):
 
     def add(self, key: str, data: Union[List, str]) -> bool:
         self.__read()
-        """ Add data `List` or `str` to key: `str` """
+        """ Add data `list` or `str` to key: `str` """
         if key in dict.keys(self.__config):
             self.__config[key].append(data)
             self.__write()

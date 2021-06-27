@@ -1,8 +1,8 @@
 from typing import Optional
 
-from bot_controller import AbstractBotController
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from modules.voting_machine import VotingMachine
+from src.bot_controller import AbstractBotController
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.modules.voting_machine import VotingMachine
 
 
 class NockOutCommandProcessor(AbstractCommandProcessor):

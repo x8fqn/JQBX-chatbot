@@ -2,10 +2,10 @@ from typing import Optional, List
 
 import json, requests
 
-from bot_controller import AbstractBotController, BotController
-from room_state import AbstractRoomState, RoomState
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from jqbx_api import AbstractJQBXAPI, JQBXAPI
+from src.bot_controller import AbstractBotController, BotController
+from src.room_state import AbstractRoomState, RoomState
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.jqbx_api import AbstractJQBXAPI, JQBXAPI
 
 
 class TopRoomsProcessor(AbstractCommandProcessor):

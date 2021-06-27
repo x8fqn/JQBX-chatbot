@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict
 
-from data_service import AbstractDataService
+from src.data_service import AbstractDataService
 
 
 class FakeDataService(AbstractDataService):

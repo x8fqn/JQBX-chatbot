@@ -1,6 +1,6 @@
 from typing import Optional
 
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 
 
 class FakeCommandProcessor(AbstractCommandProcessor):

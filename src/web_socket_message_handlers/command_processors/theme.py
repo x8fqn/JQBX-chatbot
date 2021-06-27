@@ -1,9 +1,9 @@
 from typing import Optional
 
-from bot_controller import AbstractBotController, BotController
-from data_service import DataService, AbstractDataService
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from room_state import AbstractRoomState, RoomState
+from src.bot_controller import AbstractBotController, BotController
+from src.data_service import DataService, AbstractDataService
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.room_state import AbstractRoomState, RoomState
 
 
 class ThemeCommandProcessor(AbstractCommandProcessor):

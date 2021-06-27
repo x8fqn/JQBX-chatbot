@@ -1,7 +1,7 @@
 from typing import Callable, Optional, List, Any
 
-from web_socket_client import AbstractWebSocketClient
-from web_socket_message import WebSocketMessage
+from src.web_socket_client import AbstractWebSocketClient
+from src.web_socket_message import WebSocketMessage
 
 
 class FakeWebSocketClient(AbstractWebSocketClient):

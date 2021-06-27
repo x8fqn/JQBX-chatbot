@@ -1,7 +1,7 @@
 from typing import Optional
 
-from bot_controller import AbstractBotController, BotController
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.bot_controller import AbstractBotController, BotController
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from dadjokes import dadjokes
 
 

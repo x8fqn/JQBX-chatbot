@@ -1,9 +1,9 @@
 from typing import Optional
 
-from bot_controller import AbstractBotController
-from room_state import AbstractRoomState, RoomState
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from modules.starring_machine import StarringMachine
+from src.bot_controller import AbstractBotController
+from src.room_state import AbstractRoomState, RoomState
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.modules.starring_machine import StarringMachine
 
 
 class StarProcessor(AbstractCommandProcessor):

@@ -1,14 +1,14 @@
 import logging
-from room_state import AbstractRoomState, RoomState
-from web_socket_message import WebSocketMessage
-from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
-from configuration import AbstractConfiguration, Configuration
-from web_socket_message_handlers.command_processors.first import FirstProcessor
+from src.room_state import AbstractRoomState, RoomState
+from src.web_socket_message import WebSocketMessage
+from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from src.configuration import AbstractConfiguration, Configuration
+from src.web_socket_message_handlers.command_processors.first import FirstProcessor
 
 class PlayTrackHandler(AbstractWebSocketMessageHandler):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance()):
         self.__room_state = room_state
-        self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
+        self.__config: AbstractConfiguration = Configuration('bot_main')
 
     @property
     def message_label(self) -> str:

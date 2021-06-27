@@ -1,17 +1,17 @@
+import os, requests, json
 from typing import Optional, List, cast
-import requests
-import json
 from dateutil import parser as dateparser
-from configuration import AbstractConfiguration, Configuration
 
-from bot_controller import AbstractBotController, BotController
-from room_state import AbstractRoomState, RoomState
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.helpers import get_main_dir, get_config_path
+from src.configuration import AbstractConfiguration, Configuration
+from src.bot_controller import AbstractBotController, BotController
+from src.room_state import AbstractRoomState, RoomState
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 
 class FirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(), 
-                 config: AbstractConfiguration = Configuration('bot_main', '../config')):
+                 config: AbstractConfiguration = Configuration('bot_main')):
         self.__config = config
         self.__bot_controller = bot_controller
         self.__room_state = room_state
@@ -54,8 +54,9 @@ class FirstProcessor(AbstractCommandProcessor):
         self.__bot_controller.chat(' '.join(msg))
 
 class AutoFirstProcessor(AbstractCommandProcessor):
-    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance()):
-        self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
+    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
+                 config: AbstractConfiguration = Configuration('bot_main')):
+        self.__config = config
         self.__bot_controller = bot_controller
 
     @property

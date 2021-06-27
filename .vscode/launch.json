@@ -8,8 +8,7 @@
             "name": "Python: Модуль",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/src",
-            "module": "main"
+            "module": "src.main"
         },
         {
             "name": "Python: Текущий файл",

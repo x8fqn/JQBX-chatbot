@@ -1,10 +1,10 @@
 from typing import Optional
 
-from bot_controller import AbstractBotController
-# from data_service import DataService, AbstractDataService
-from room_state import AbstractRoomState, RoomState
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from modules.voting_machine import VotingMachine
+from src.bot_controller import AbstractBotController
+# from src.data_service import DataService, AbstractDataService
+from src.room_state import AbstractRoomState, RoomState
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.modules.voting_machine import VotingMachine
 
 
 class RockOutCommandProcessor(AbstractCommandProcessor):

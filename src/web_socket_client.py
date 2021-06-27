@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, Optional, Any
 
 from websocket import WebSocketApp
-from web_socket_message import WebSocketMessage
+from src.web_socket_message import WebSocketMessage
 
 
 class AbstractWebSocketClient(ABC):

@@ -1,16 +1,16 @@
-import logging
+import os, logging
 from typing import List, Dict
 
-from web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from web_socket_message_handlers.command_processors.command_processors import command_processors
-from web_socket_message_handlers.command_processors.help import HelpCommandProcessor
-from configuration import AbstractConfiguration, Configuration
-from web_socket_message import WebSocketMessage
-from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.command_processors.command_processors import command_processors
+from src.web_socket_message_handlers.command_processors.help import HelpCommandProcessor
+from src.configuration import AbstractConfiguration, Configuration
+from src.web_socket_message import WebSocketMessage
+from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
 
 
 class PushMessageHandler(AbstractWebSocketMessageHandler):
-    def __init__(self, config: AbstractConfiguration = Configuration('bot_main', '../config'),
+    def __init__(self, config: AbstractConfiguration = Configuration('bot_main'),
                  _command_processors: List[AbstractCommandProcessor] = None):
         self.__config = config
         self.__command_processors: Dict[str, AbstractCommandProcessor] = {

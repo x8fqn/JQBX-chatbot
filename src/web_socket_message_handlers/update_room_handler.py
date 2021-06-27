@@ -1,19 +1,22 @@
+import os
 from typing import List
 
-from bot_controller import AbstractBotController, BotController
-from configuration import AbstractConfiguration, Configuration
-from room_state import AbstractRoomState, RoomState
-from web_socket_message import WebSocketMessage
-from web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from src.bot_controller import AbstractBotController, BotController
+from src.configuration import AbstractConfiguration, Configuration
+from src.room_state import AbstractRoomState, RoomState
+from src.web_socket_message import WebSocketMessage
+from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
 
 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-                 room_state: AbstractRoomState = RoomState.get_instance()):
+                 room_state: AbstractRoomState = RoomState.get_instance(),
+                 config: AbstractConfiguration = Configuration('bot_main'),
+                 welcome_config: AbstractConfiguration = Configuration('welcome')):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
-        self.__config: AbstractConfiguration = Configuration('bot_main', '../config')
-        self.__welcome_config: AbstractConfiguration = Configuration('welcome','../config')
+        self.__config = config
+        self.__welcome_config = welcome_config
 
     @property
     def message_label(self) -> str:
@@ -46,8 +49,7 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         if 'users' in payload:
             self.__room_state.set_users(users)
 
-        self.__welcome_config.update()
-        if self.__welcome_config.get()['enabled'] == True:
+        if self.__welcome_config.update()['enabled'] == True:
             if 'new_users' in locals():
                 for user in new_users:
                     self.__bot_controller.whisper(self.__welcome_config.get()['message'], user)

@@ -12,4 +12,8 @@ def get_bot_user(config: dict) -> dict:
     }
 
 def get_main_dir() -> str:
-    return os.path.dirname(sys.modules['__main__'].__file__)
+    # return os.path.dirname(sys.modules['__main__'].__file__)
+    return os.getcwd()
+
+def get_config_path() -> str:
+    return os.path.join(os.getcwd(), 'config')

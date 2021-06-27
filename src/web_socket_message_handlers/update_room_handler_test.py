@@ -2,20 +2,20 @@ import copy
 from typing import List
 from unittest import TestCase
 
-from room_state import RoomState
-from test_utils.fake_bot_controller import FakeBotController
-from test_utils.fake_data_service import FakeDataService
-from test_utils.test_helpers import create_random_id_object
-from web_socket_message import WebSocketMessage
-from web_socket_message_handlers.update_room_handler import UpdateRoomHandler
+from src.room_state import RoomState
+from src.test_utils.fake_bot_controller import FakeBotController
+# from src.test_utils.fake_data_service import FakeDataService
+from src.test_utils.test_helpers import create_random_id_object
+from src.web_socket_message import WebSocketMessage
+from src.web_socket_message_handlers.update_room_handler import UpdateRoomHandler
 
 
 class UpdateRoomHandlerTest(TestCase):
     def setUp(self) -> None:
         self.__bot_controller = FakeBotController()
-        self.__data_service = FakeDataService()
+        # self.__data_service = FakeDataService()
         self.__room_state = copy.deepcopy(RoomState.get_instance(self.__bot_controller))
-        self.__handler = UpdateRoomHandler(self.__bot_controller, self.__room_state, self.__data_service)
+        self.__handler = UpdateRoomHandler(self.__bot_controller, self.__room_state)
 
     def test_mod_ids(self):
         self.assertEqual(len(self.__room_state.mod_ids), 0)
@@ -35,7 +35,7 @@ class UpdateRoomHandlerTest(TestCase):
         self.assertEqual(sorted(['1', '2', '3']), sorted(self.__room_state.mod_ids))
 
     def test_welcome(self):
-        self.__data_service.set_welcome_message('what it do nephew')
+        # self.__data_service.set_welcome_message('what it do nephew')
         self.__handler.handle(WebSocketMessage(label='update-room', payload={
             'users': [
                 self.__to_spotify_user('1'),
@@ -51,13 +51,10 @@ class UpdateRoomHandlerTest(TestCase):
                 self.__to_spotify_user('4')
             ]
         }))
-        self.__dequeue_and_assert_whispers([
-            '@User3 what it do nephew',
-            '@User4 what it do nephew'
-        ])
+        self.__dequeue_and_assert_number_whispers(2)
 
     def test_no_welcome_because_no_initial_users(self):
-        self.__data_service.set_welcome_message('what it do nephew')
+        # self.__data_service.set_welcome_message('what it do nephew')
         self.__handler.handle(WebSocketMessage(label='update-room', payload={
             'users': [
                 self.__to_spotify_user('1'),
@@ -66,21 +63,22 @@ class UpdateRoomHandlerTest(TestCase):
         }))
         self.__dequeue_and_assert_whispers([])
 
-    def test_no_welcome_because_no_message(self):
-        self.__handler.handle(WebSocketMessage(label='update-room', payload={
-            'users': [
-                self.__to_spotify_user('a')
-            ]
-        }))
-        self.__handler.handle(WebSocketMessage(label='update-room', payload={
-            'users': [
-                self.__to_spotify_user('a'),
-                self.__to_spotify_user('b')
-            ]
-        }))
-        self.__dequeue_and_assert_whispers([])
+    # def test_no_welcome_because_no_message(self):
+    #     self.__handler.handle(WebSocketMessage(label='update-room', payload={
+    #         'users': [
+    #             self.__to_spotify_user('a')
+    #         ]
+    #     }))
+    #     self.__handler.handle(WebSocketMessage(label='update-room', payload={
+    #         'users': [
+    #             self.__to_spotify_user('a'),
+    #             self.__to_spotify_user('b')
+    #         ]
+    #     }))
+    #     self.__dequeue_and_assert_whispers([])
 
     def test_tracks(self):
+        self.__room_state.set_current_track(None)
         self.assertIsNone(self.__room_state.current_track)
         last_track = create_random_id_object()
         self.__handler.handle(WebSocketMessage(label='update-room', payload={
@@ -102,6 +100,9 @@ class UpdateRoomHandlerTest(TestCase):
 
     def __dequeue_and_assert_whispers(self, expected_whispers: List[str]) -> None:
         self.assertEqual(expected_whispers, self.__bot_controller.dequeue_whispers())
+
+    def __dequeue_and_assert_number_whispers(self, expected_number_whispers: int) -> None:
+        self.assertEqual(expected_number_whispers, len(self.__bot_controller.dequeue_whispers()))
 
     @staticmethod
     def __to_spotify_uri(user_id: str) -> str:
