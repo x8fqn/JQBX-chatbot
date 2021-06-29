@@ -68,7 +68,7 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
             self.__room_state.set_room_title(room_title)
 
     def __update_votes(self, payload: dict) -> None:
-        if 'currentTrack' not in payload.values():
+        if 'currentTrack' not in payload.keys():
             return
         payload = payload.get('currentTrack')
         thumbUp_count = payload.get('thumbsUp')

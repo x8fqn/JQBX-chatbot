@@ -9,7 +9,7 @@ class AbstractConfiguration(ABC):
         pass
 
     @abstractmethod
-    def update(self) -> dict:
+    def update(self, key: str = None):
         pass
 
     @abstractmethod
@@ -58,9 +58,11 @@ class Configuration(AbstractConfiguration):
             return self.__config
         return self.__config.get(key)
     
-    def update(self) -> dict:
+    def update(self, key: str = None):
         self.__read()
-        return self.__config
+        if key == None:
+            return self.__config
+        return self.__config.get(key)
 
     def add(self, key: str, data: Union[List, str]) -> bool:
         self.__read()
