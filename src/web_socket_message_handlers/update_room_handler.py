@@ -46,13 +46,13 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
                    and user['id'] not in [y['id'] for y in self.__room_state.users]
             ]
 
-        if 'users' in payload:
-            self.__room_state.set_users(users)
-
-        if self.__welcome_config.update()['enabled'] == True:
-            if 'new_users' in locals():
+        if 'new_users' in locals():
+            if self.__welcome_config.update()['enabled'] == True:
                 for user in new_users:
                     self.__bot_controller.whisper(self.__welcome_config.get()['message'], user)
+        
+        if 'users' in payload:
+            self.__room_state.set_users(users)
 
         if 'djs' in payload:
             self.__room_state.set_djs(djs)
@@ -80,4 +80,4 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
             thumbDown_count = 0
         if not star_count:
             star_count = 0
-        self.__room_state.set_votes(thumbUp_count, thumbDown_count, star_count)
+        self.__room_state.set_votes(thumbUp_count, thumbDown_count, star_count, self.__room_state.max_user_count)

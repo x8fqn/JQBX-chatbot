@@ -10,7 +10,7 @@ def create_random_id_object() -> dict:
     return {'id': create_random_string()}
 
 def create_random_track_object(track_id: str = create_random_string(),
-user_id: str = create_random_string(), started_at: float = random.randrange(100, 10000000),
+user_id: str = create_random_string(), started_at: float = random.randrange(10000, 1000000000) / 1000,
 artist: str = create_random_string(3), track_name: str = create_random_string(5)) -> dict:
     return {
          "id": track_id,

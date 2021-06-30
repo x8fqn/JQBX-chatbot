@@ -15,4 +15,4 @@ class TrackHistoryTest(TestCase):
     def test_add_and_update(self):
         self.track_history.add_track(self.track['name'], self.track['artists'], 
             self.track['uri'], self.track['startedAt'], self.track['userUri'])
-        self.track_history.update_track_votes(self.track['startedAt'], 3, 4, 5)
+        self.track_history.update_track_votes(self.track['startedAt'], 3, 4, 5, 8)

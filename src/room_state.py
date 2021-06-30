@@ -35,7 +35,13 @@ class AbstractRoomState(ABC):
         pass
 
     @property
+    @abstractmethod
     def votes(self) -> Optional[dict]:
+        pass
+
+    @property
+    @abstractmethod
+    def max_user_count(self) -> int:
         pass
     
     @abstractmethod
@@ -59,7 +65,7 @@ class AbstractRoomState(ABC):
         pass
 
     @abstractmethod
-    def set_votes(self, thumbsUp: int, thumbsDown: int, stars: int) -> None:
+    def set_votes(self, thumbsUp: int, thumbsDown: int, stars: int, max_user_count: int) -> None:
         pass
 
 
@@ -76,6 +82,7 @@ class RoomState(AbstractRoomState):
         self.__thumbUp_count: int = None
         self.__thumbDown_count: int = None
         self.__star_count: int = None
+        self.__max_user_count: int = None
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
         self.__track_history = track_history
@@ -111,16 +118,24 @@ class RoomState(AbstractRoomState):
     @property
     def votes(self) -> Optional[dict]:
         return {
-            'thumbUp': self.__thumbUp_count,
-            'thumbDown': self.__thumbDown_count,
-            'star': self.__star_count
+            'thumbsUp': self.__thumbUp_count,
+            'thumbsDown': self.__thumbDown_count,
+            'stars': self.__star_count
         }
+    
+    @property
+    def max_user_count(self) -> int:
+        return self.__max_user_count
 
     def set_mod_ids(self, mod_ids: List[str]) -> None:
         self.__mod_ids = mod_ids
 
     def set_users(self, users: List[dict]) -> None:
         self.__users = users
+        new_user_count = len(users)
+        current_user_count = len(self.users)
+        if new_user_count > current_user_count:
+            self.__max_user_count = new_user_count
 
     def set_djs(self, djs: List[dict]) -> None:
         self.__djs = djs
@@ -132,15 +147,16 @@ class RoomState(AbstractRoomState):
             self.__current_track['uri'], parser.parse(self.__current_track['startedAt']).timestamp(),
             self.__current_track['userUri'])
         self.__bot_controller.reset_vote()
+        self.__max_user_count = len(self.users)
 
     def set_room_title(self, room_title: str) -> None:
         if self.__room_title != room_title:
             self.__room_title = room_title
             logging.info('Room title changed: %s' % room_title , )
 
-    def set_votes(self, thumbUp_count: int, thumbDown_count: int, star_count: int) -> None:
+    def set_votes(self, thumbUp_count: int, thumbDown_count: int, star_count: int, max_user_count: int) -> None:
         self.__thumbUp_count = thumbUp_count
         self.__thumbDown_count = thumbDown_count
         self.__star_count = star_count
         self.__track_history.update_track_votes(parser.parse(self.__current_track['startedAt']).timestamp(), 
-            self.__thumbUp_count, self.__thumbDown_count, self.__star_count)
+            thumbUp_count, thumbDown_count, star_count, max_user_count)
