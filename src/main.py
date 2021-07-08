@@ -14,7 +14,8 @@ def main(web_socket_client: AbstractWebSocketClient,
         logging.info('Websocket connection OPENED')
         web_socket_client.send(WebSocketMessage(label='join', payload={
             'roomId': config.get('jqbx_room_id'),
-            'user': get_bot_user(config.get())
+            'user': get_bot_user(config.get('username'), config.get('user_id'), config.get('image_url'), 
+            config.get('thumbsUpImage_url'), config.get('thumbsDownImage_url'), config.get('djImage_url'))
         }))
 
     def __on_message(message: WebSocketMessage) -> None:

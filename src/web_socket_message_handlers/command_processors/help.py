@@ -20,7 +20,7 @@ class HelpCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'This'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         lines: List[str] = []
         if payload in {None, ''}:
             return self.__bot_controller.chat(

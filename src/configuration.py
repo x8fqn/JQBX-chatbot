@@ -13,15 +13,15 @@ class AbstractConfiguration(ABC):
         pass
 
     @abstractmethod
-    def add(self, key: str, data: Union[List, str]) -> bool:
+    def add(self, key: str, data: Union[List[str], str]) -> bool:
         pass
 
     @abstractmethod
-    def set(self, key: str, data: Union[List, int, str, bool]) -> bool:
+    def set(self, key: str, data: Union[List[str], int, str, bool]) -> bool:
         pass
 
     @abstractmethod
-    def remove(self, key: str, list_item: Union[int, str] = None) -> bool:
+    def remove(self, key: str, list_item: Union[List[str], int, str] = None) -> bool:
         pass
 
 class Configuration(AbstractConfiguration):
@@ -64,7 +64,7 @@ class Configuration(AbstractConfiguration):
             return self.__config
         return self.__config.get(key)
 
-    def add(self, key: str, data: Union[List, str]) -> bool:
+    def add(self, key: str, data: Union[List[str], str]) -> bool:
         self.__read()
         """ Add data `list` or `str` to key: `str` """
         if key in dict.keys(self.__config):
@@ -74,7 +74,7 @@ class Configuration(AbstractConfiguration):
         else:
             return False
     
-    def set(self, key: str, data: Union[List, int, str, bool]) -> bool:
+    def set(self, key: str, data: Union[List[str], int, str, bool]) -> bool:
         """ Set key: `str` -> data: `List` or `str` """
         self.__read()
         if key in dict.keys(self.__config):

@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 
 from src.bot_controller import AbstractBotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from src.modules.starring_machine import StarringMachine
+from src.web_socket_message_handlers.command_processors.workers.starring_machine import StarringMachine
 
 
 class StarProcessor(AbstractCommandProcessor):
@@ -21,7 +21,7 @@ class StarProcessor(AbstractCommandProcessor):
             Votes for the bot to star a song. Requires 3 people.
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         self.__starring_machine.vote(user_id, self.__star)
 
     def __star(self, bot_controller: AbstractBotController) -> None:

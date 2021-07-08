@@ -14,5 +14,5 @@ web_socket_message_handlers: List[AbstractWebSocketMessageHandler] = [
 ]
 
 web_socket_message_handler_map: Dict[str, AbstractWebSocketMessageHandler] = {
-    x.message_label: x for x in web_socket_message_handlers
+    handler.message_label: handler for handler in web_socket_message_handlers
 }

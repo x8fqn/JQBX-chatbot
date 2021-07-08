@@ -26,7 +26,7 @@ class TopRoomsProcessor(AbstractCommandProcessor):
             Top of active rooms in JQBX 
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         topRoomsReq = self.__api.roomsActive()
         respLen = 10 if len(topRoomsReq['rooms']) >= 10 else len(topRoomsReq['rooms'])
         msg = ['%s) [%s users] %s ' % (x + 1, len(topRoomsReq['rooms'][x]['users']), topRoomsReq['rooms'][x]['title']) for x in range(len(topRoomsReq['rooms']))][0:respLen]

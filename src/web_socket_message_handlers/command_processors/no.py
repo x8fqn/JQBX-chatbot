@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 
 from src.bot_controller import AbstractBotController
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from src.modules.voting_machine import VotingMachine
+from src.web_socket_message_handlers.command_processors.workers.voting_machine import VotingMachine
 
 
 class NockOutCommandProcessor(AbstractCommandProcessor):
@@ -19,7 +19,7 @@ class NockOutCommandProcessor(AbstractCommandProcessor):
             Votes for the bot to downvote (nope) a song. Requires 3 people.
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         self.__voting_machine.vote(user_id, self.__nope)
 
     def __nope(self, bot_controller: AbstractBotController) -> None:

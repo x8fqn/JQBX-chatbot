@@ -25,7 +25,7 @@ class HayProcessor(AbstractCommandProcessor):
             Interroom messaging. Using: /hay [roomHandle or roomID] [message]
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         if payload in {'', None}:
             return self.__bot_controller.chat('[Hay] :email::x: Not enough arguments')
         else:

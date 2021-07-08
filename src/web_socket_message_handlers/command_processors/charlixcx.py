@@ -1,5 +1,5 @@
 import random, sqlite3, os, sys
-from src.helpers import get_main_dir
+from src.helpers import get_config_path
 from sqlite3 import connect
 from datetime import datetime
 from typing import Optional, List
@@ -20,8 +20,8 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Bring me the pictures of Charli XCX immediately!'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
-        path = os.path.join(get_main_dir(), '..', 'config', 'gifs.sqlite')
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+        path = os.path.join(get_config_path(), 'gifs.sqlite')
         connection = connect(path)
         connection.execute('''
             CREATE TABLE IF NOT EXISTS charlixcx (

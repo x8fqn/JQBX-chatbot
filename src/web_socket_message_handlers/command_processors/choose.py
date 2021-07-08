@@ -1,5 +1,5 @@
 import random
-from typing import Optional
+from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
@@ -17,7 +17,7 @@ class ChooseCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Pick something randomly from a comma-separated list of choices'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         if not payload:
             self.__bot_controller.chat('Please give me a comma-separate list of choices')
             return

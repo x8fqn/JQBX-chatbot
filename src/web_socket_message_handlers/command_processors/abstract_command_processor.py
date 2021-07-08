@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import List, Optional
 
 
 class AbstractCommandProcessor(ABC):
@@ -14,5 +14,5 @@ class AbstractCommandProcessor(ABC):
         pass
 
     @abstractmethod
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         pass

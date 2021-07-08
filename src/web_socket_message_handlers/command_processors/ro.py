@@ -1,10 +1,10 @@
-from typing import Optional
+from typing import Optional, List
 
 from src.bot_controller import AbstractBotController
 # from src.data_service import DataService, AbstractDataService
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from src.modules.voting_machine import VotingMachine
+from src.web_socket_message_handlers.command_processors.workers.voting_machine import VotingMachine
 
 
 class RockOutCommandProcessor(AbstractCommandProcessor):
@@ -22,7 +22,7 @@ class RockOutCommandProcessor(AbstractCommandProcessor):
             Votes for the bot to rock out (dope) a song. Requires 3 people.
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         self.__voting_machine.vote(user_id, self.__dope_and_add_to_playlist)
 
     def __dope_and_add_to_playlist(self, bot_controller: AbstractBotController) -> None:

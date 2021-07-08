@@ -17,7 +17,7 @@ class UrbanCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Get the urban dictionary definition of a word'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         if not payload:
             self.__bot_controller.chat('Please provide a search query')
             return

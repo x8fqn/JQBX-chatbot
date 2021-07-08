@@ -1,18 +1,24 @@
 import os, sys
 
-def get_bot_user(config: dict) -> dict:
-    return {
-        'username': config['jqbx_bot_display_name'],
-        'id': config['spotify_user_id'],
-        'uri': 'spotify:user:%s' % config['spotify_user_id'],
+def get_bot_user(username: str, user_id: str, image_url: str, thumbUpImage: str = None,
+thumbDownImage: str = None, djImage: str = None) -> dict:
+    user = {
+        'username': username,
+        'id': user_id,
+        'uri': 'spotify:user:%s' % user_id,
         'device': 'bot',
         'status': 'active',
         'country': 'US',
-        'image': config['jqbx_bot_image_url']
+        'image': image_url
     }
+    if djImage: 
+        user.update({'djImage': djImage})
+    if thumbUpImage: 
+        user.update({'thumbsUpImage': thumbUpImage})
+    if thumbDownImage: 
+        user.update({'thumbsDownImage': thumbDownImage})
 
 def get_main_dir() -> str:
-    # return os.path.dirname(sys.modules['__main__'].__file__)
     return os.getcwd()
 
 def get_config_path() -> str:

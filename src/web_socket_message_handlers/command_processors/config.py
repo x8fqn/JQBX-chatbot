@@ -24,9 +24,8 @@ class ConfigProcessor(AbstractCommandProcessor):
             Bot's components configuration
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
-        if (user_id in self.__room_state.mod_ids) != True:
-            return self.__bot_controller.chat('You\'re not moderator or admin')
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+        if not self.__isAdmin(user_id): return
 
         if payload == None:
             self.__bot_controller.chat('Config: welcome')
@@ -61,3 +60,9 @@ class ConfigProcessor(AbstractCommandProcessor):
                 pass
         else:
             self.__bot_controller.chat('Сomponent is not available for configuration')
+    
+    def __isAdmin(self, user_id: str) -> bool:
+        if (user_id in self.__room_state.mod_ids) != True:
+            self.__bot_controller.chat('You\'re not moderator or admin')
+            return False
+        else: return True

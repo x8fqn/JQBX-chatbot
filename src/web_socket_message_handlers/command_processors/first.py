@@ -24,7 +24,7 @@ class FirstProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Get info about the first play of the current track on JQBX'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         jqbx_first_request = json.loads(requests.get('%s/%s' % (
                 self.__config.get()['jqbx_first_api'],
                 self.__room_state.current_track['uri'])).text)

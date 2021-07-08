@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
 from src.data_service import DataService, AbstractDataService
@@ -24,7 +24,7 @@ class ThemeCommandProcessor(AbstractCommandProcessor):
             See the current theme
         '''
 
-    def process(self, user_id: str, payload: Optional[str] = None) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         current_welcome_message = self.__data_service.get_welcome_message()
         if current_welcome_message:
             self.__bot_controller.chat(current_welcome_message)

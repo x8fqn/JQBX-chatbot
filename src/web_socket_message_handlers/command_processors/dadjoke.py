@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
@@ -17,5 +17,5 @@ class DadjokeCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Hi, I\'m Dad.'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
         self.__bot_controller.chat(dadjokes.Dadjoke().joke)
