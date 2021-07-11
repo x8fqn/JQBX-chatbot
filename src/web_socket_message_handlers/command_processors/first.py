@@ -1,20 +1,20 @@
-import os, requests, json
-from typing import Optional, List, cast
+import requests, json
+from typing import Optional, List
 from dateutil import parser as dateparser
 
-from src.helpers import get_main_dir, get_config_path
-from src.configuration import AbstractConfiguration, Configuration
+from src.jqbx_api import AbstractJQBXAPI, JQBXAPI
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.config import AbstractConfig, Config
 
 class FirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-                 room_state: AbstractRoomState = RoomState.get_instance(), 
-                 config: AbstractConfiguration = Configuration('bot_main')):
-        self.__config = config
+                 room_state: AbstractRoomState = RoomState.get_instance(),
+                 jqbx_api: AbstractJQBXAPI = JQBXAPI()):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
+        self.__api = jqbx_api
 
     @property
     def keyword(self) -> str:
@@ -25,9 +25,7 @@ class FirstProcessor(AbstractCommandProcessor):
         return 'Get info about the first play of the current track on JQBX'
 
     def process(self, user_id: str, payload: Optional[List[str]]) -> None:
-        jqbx_first_request = json.loads(requests.get('%s/%s' % (
-                self.__config.get()['jqbx_first_api'],
-                self.__room_state.current_track['uri'])).text)
+        jqbx_first_request = self.__api.firsts(self.__room_state.current_track['uri'])
         firstDB = {
             'track_name': str(jqbx_first_request['track']['name']),
             'artists': ", ".join([i['name'] for i in jqbx_first_request['track']['artists']]),
@@ -55,7 +53,7 @@ class FirstProcessor(AbstractCommandProcessor):
 
 class AutoFirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-                 config: AbstractConfiguration = Configuration('bot_main')):
+                 config: AbstractConfig = Config('bot_main')):
         self.__config = config
         self.__bot_controller = bot_controller
 
@@ -67,7 +65,7 @@ class AutoFirstProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Switch auto-first on every tune'
 
-    def process(self, user_id: str, payload: Optional[str]) -> None:
+    def process(self, user_id: str, args: Optional[str]) -> None:
         try:
             if self.__config.get()['auto-first'] == True:
                 self.__config.set('auto-first', False)

@@ -1,14 +1,14 @@
 from unittest import TestCase
 
 from src.test_utils.fake_command_processor import FakeCommandProcessor
-from src.configuration import AbstractConfiguration, Configuration
+from src.config import AbstractConfig, Config
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.push_message_handler import PushMessageHandler
 
 
 class PushMessageHandlerTest(TestCase):
     def setUp(self) -> None:
-        self.__config: AbstractConfiguration = Configuration('bot_main')
+        self.__config: AbstractConfig = Config('bot_main')
         self.__command_processor = FakeCommandProcessor()
         self.__handler = PushMessageHandler(self.__config, [self.__command_processor])
 

@@ -17,8 +17,8 @@ class ChooseCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Pick something randomly from a comma-separated list of choices'
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
-        if not payload:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+        if not args:
             self.__bot_controller.chat('Please give me a comma-separate list of choices')
             return
-        self.__bot_controller.chat(random.choice(payload.split(',')).strip())
+        self.__bot_controller.chat(random.choice(args.split(',')).strip())

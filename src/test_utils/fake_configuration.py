@@ -1,1 +1,1 @@
-from src.configuration import AbstractConfiguration 
+from src.config import AbstractConfig 

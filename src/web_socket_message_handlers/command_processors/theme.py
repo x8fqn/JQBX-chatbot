@@ -24,7 +24,7 @@ class ThemeCommandProcessor(AbstractCommandProcessor):
             See the current theme
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         current_welcome_message = self.__data_service.get_welcome_message()
         if current_welcome_message:
             self.__bot_controller.chat(current_welcome_message)

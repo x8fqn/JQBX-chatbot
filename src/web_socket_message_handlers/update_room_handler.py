@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from src.bot_controller import AbstractBotController, BotController
-from src.configuration import AbstractConfiguration, Configuration
+from src.config import AbstractConfig, Config
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
@@ -11,8 +11,8 @@ from src.web_socket_message_handlers.abstract_web_socket_message_handler import 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
-                 config: AbstractConfiguration = Configuration('bot_main'),
-                 welcome_config: AbstractConfiguration = Configuration('welcome')):
+                 config: AbstractConfig = Config('bot_main'),
+                 welcome_config: AbstractConfig = Config('welcome')):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
         self.__config = config
@@ -42,7 +42,7 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         if self.__room_state.users:
             new_users = [
                 user for user in users
-                if user['id'] != self.__config.get()['spotify_user_id']
+                if user['id'] != self.__config.get('user_id')
                    and user['id'] not in [y['id'] for y in self.__room_state.users]
             ]
 

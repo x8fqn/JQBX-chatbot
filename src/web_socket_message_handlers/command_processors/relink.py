@@ -24,7 +24,7 @@ class RelinkCommandProcessor(AbstractCommandProcessor):
             If a song is not available to your country, find links to international versions.
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         countries: List[str] = list(set([x['country'] for x in self.__room_state.users]))
         international_versions = self.__data_service.relink(self.__room_state.current_track['id'], countries)
         if not international_versions:

@@ -20,14 +20,14 @@ class HelpCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'This'
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         lines: List[str] = []
-        if payload in {None, ''}:
+        if args in {None, ''}:
             return self.__bot_controller.chat(
                 ', '.join(['/%s' % self.__commands[key].keyword for key in sorted(self.__commands.keys())]))
-        payload = payload.strip()
-        if payload.startswith(('-', '--')):
-            if payload in {'-h', '--help'}:
+        args = args.strip()
+        if args.startswith(('-', '--')):
+            if args in {'-h', '--help'}:
                 helpMsg = [
                 'Usage:',
                 '/help [command] - get a command description',
@@ -36,11 +36,11 @@ class HelpCommandProcessor(AbstractCommandProcessor):
                 '--help - show this message',
                 '-v, --verbose - informative version of help (for desktop)']
                 return self.__bot_controller.chat(helpMsg)
-            elif payload in {'-v', '--verbose'}:
+            elif args in {'-v', '--verbose'}:
                 return self.__bot_controller.chat(
                     ['/%s - %s' % (self.__commands[key].keyword, self.__commands[key].help) for key in sorted(self.__commands.keys())])
-        if payload in [self.__commands[key].keyword for key in self.__commands.keys()]:
+        if args in [self.__commands[key].keyword for key in self.__commands.keys()]:
             for key in self.__commands.keys():
-                if self.__commands[key].keyword == payload:
+                if self.__commands[key].keyword == args:
                     return self.__bot_controller.chat('/%s - %s' % (self.__commands[key].keyword, self.__commands[key].help))
 

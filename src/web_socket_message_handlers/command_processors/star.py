@@ -21,7 +21,7 @@ class StarProcessor(AbstractCommandProcessor):
             Votes for the bot to star a song. Requires 3 people.
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         self.__starring_machine.vote(user_id, self.__star)
 
     def __star(self, bot_controller: AbstractBotController) -> None:

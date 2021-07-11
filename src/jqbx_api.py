@@ -1,31 +1,30 @@
 import requests
 from abc import ABC, abstractmethod
-from requests.api import request
 
 
 class AbstractJQBXAPI(ABC):
     @abstractmethod
-    def firsts(spotify_uri: str) -> dict:
+    def firsts(self, spotify_uri: str) -> dict:
         pass
 
     @abstractmethod
-    def user(user_id: str) -> dict:
+    def user(self, user_id: str) -> dict:
         pass
 
     @abstractmethod
-    def room(room_id: str) -> dict:
+    def room(self, room_id: str) -> dict:
         pass
 
     @abstractmethod
-    def roomsActive(page = 0) -> dict:
+    def roomsActive(self, page = 0) -> dict:
         pass
 
     @abstractmethod
-    def roomsAll(page: int) -> dict:
+    def roomsAll(self, page: int) -> dict:
         pass
         
     @abstractmethod
-    def promotions() -> dict:
+    def promotions(self) -> dict:
         pass
 
 

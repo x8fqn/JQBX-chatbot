@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.configuration import AbstractConfiguration, Configuration
+from src.config import AbstractConfig, Config
 from src.test_utils.fake_web_socket_client import FakeWebSocketClient
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.keep_awake_handler import KeepAwakeHandler
@@ -8,7 +8,7 @@ from src.web_socket_message_handlers.keep_awake_handler import KeepAwakeHandler
 
 class KeepAwakeHandlerTest(TestCase):
     def setUp(self) -> None:
-        self.__config: AbstractConfiguration = Configuration('bot_main')
+        self.__config: AbstractConfig = Config('bot_main')
         self.__client = FakeWebSocketClient()
         self.__handler = KeepAwakeHandler(self.__client)
 

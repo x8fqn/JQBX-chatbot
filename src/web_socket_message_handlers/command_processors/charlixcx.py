@@ -20,7 +20,7 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Bring me the pictures of Charli XCX immediately!'
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         path = os.path.join(get_config_path(), 'gifs.sqlite')
         connection = connect(path)
         connection.execute('''
@@ -30,12 +30,12 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
                 publisher_id TEXT,
                 url TEXT
         )''')
-        if payload != None:
-            payload = payload.strip().split()
-            if payload[0] in {'add'}:
-                if len(payload) > 1 and payload[1] != None:
-                    if payload[1].startswith(('http://','https://')) and payload[1].endswith('.gif'):
-                        gif_url = payload[1]
+        if args != None:
+            args = args.strip().split()
+            if args[0] in {'add'}:
+                if len(args) > 1 and args[1] != None:
+                    if args[1].startswith(('http://','https://')) and args[1].endswith('.gif'):
+                        gif_url = args[1]
                         self.add(connection, gif_url, user_id)
                         self.__bot_controller.chat('Gif has been added :+1:')            
                     else:

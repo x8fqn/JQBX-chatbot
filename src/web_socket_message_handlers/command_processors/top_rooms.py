@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-import json, requests
+from time import sleep
 
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
@@ -26,13 +26,20 @@ class TopRoomsProcessor(AbstractCommandProcessor):
             Top of active rooms in JQBX 
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         topRoomsReq = self.__api.roomsActive()
         respLen = 10 if len(topRoomsReq['rooms']) >= 10 else len(topRoomsReq['rooms'])
         msg = ['%s) [%s users] %s ' % (x + 1, len(topRoomsReq['rooms'][x]['users']), topRoomsReq['rooms'][x]['title']) for x in range(len(topRoomsReq['rooms']))][0:respLen]
-        if payload != None:
-            if payload in {'--list', '-l'}:
-                return self.__bot_controller.chat(msg)    
-        return self.__bot_controller.chat(', '.join(msg))
+        self.__args_processor(args, msg)
+
+    def __args_processor(self, args: Optional[List[str]], messages: Optional[List[str]]):
+        if 'mobile' and 'list' in args:
+            for item in messages:
+                self.__bot_controller.chat(item)
+                sleep(0.1)
+        elif 'list' in args:
+            self.__bot_controller.chat(messages)
+        else:
+            self.__bot_controller.chat('; '.join(messages))
 
 

@@ -1,6 +1,6 @@
 import logging, time
 import traceback
-from src.configuration import Configuration, AbstractConfiguration
+from src.config import Config, AbstractConfig
 from src.helpers import get_bot_user
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
 from src.web_socket_message import WebSocketMessage
@@ -8,12 +8,12 @@ from src.web_socket_message_handlers.web_socket_message_handlers import web_sock
 
 
 def main(web_socket_client: AbstractWebSocketClient, 
-         config: AbstractConfiguration = Configuration('bot_main')):
+         config: AbstractConfig = Config('bot_main')):
     logging.basicConfig(level=config.get('log_level'), format='%(asctime)s - %(module)s -> %(funcName)s - [%(levelname)s] - %(message)s')
     def __on_open() -> None:
         logging.info('Websocket connection OPENED')
         web_socket_client.send(WebSocketMessage(label='join', payload={
-            'roomId': config.get('jqbx_room_id'),
+            'roomId': config.get('room_id'),
             'user': get_bot_user(config.get('username'), config.get('user_id'), config.get('image_url'), 
             config.get('thumbsUpImage_url'), config.get('thumbsDownImage_url'), config.get('djImage_url'))
         }))

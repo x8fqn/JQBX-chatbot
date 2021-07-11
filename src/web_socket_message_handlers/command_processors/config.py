@@ -1,18 +1,17 @@
-from src.configuration import Configuration, AbstractConfiguration
 from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.command_processors.workers.configure import Configure
 
 
 class ConfigProcessor(AbstractCommandProcessor):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
-                 bot_controller: AbstractBotController = BotController.get_instance(),
-                 config: AbstractConfiguration = Configuration('welcome')):
+                 bot_controller: AbstractBotController = BotController.get_instance()):
         self.__room_state = room_state
         self.__bot_controller = bot_controller
-        self.__config = config
+        self.__configurator = Configure(self.__bot_controller)
 
     @property
     def keyword(self) -> str:
@@ -21,48 +20,51 @@ class ConfigProcessor(AbstractCommandProcessor):
     @property
     def help(self) -> str:
         return '''
-            Bot's components configuration
+            Bot's components configurator
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         if not self.__isAdmin(user_id): return
+        if self.__noArguments(args): return
 
-        if payload == None:
-            self.__bot_controller.chat('Config: welcome')
-        args = payload.split(' ', 2)
-
-        if args[0] == 'welcome':
-            if 'message' not in self.__config.get().keys():
-                self.__bot_controller.chat('No welcome message setted \'/config welcome message {text}\'')
-            if 'enabled' not in self.__config.get().keys():
-                self.__config.set('enabled', False)
-
-            if len(args) < 2:
-                return self.__bot_controller.chat('Config->Welcome: on / off / status / message {text}')
-            if args[1] == 'on':
-                self.__config.set('enabled', True)
-                return self.__bot_controller.chat('Welcome message has been enabled')
-            elif args[1] == 'off':
-                self.__config.set('enabled', False)
-                return self.__bot_controller.chat('Welcome message has been disabled')
-            elif args[1] == 'status':
-                if self.__config.get()['enabled'] == True:
-                    return self.__bot_controller.chat('Welcome text message is ON')
-                else:
-                    return self.__bot_controller.chat('Welcome text message is OFF')
-            elif args[1] == 'message':
-                if args[2] != None:
-                    self.__config.set('message', args[2])
-                    return self.__bot_controller.chat('Message has been successfully changed')
-                else:
-                    return self.__bot_controller.chat('No message specified')
+        try:
+            if args[0] in 'welcome':
+                self.__configure_welcome(args[1:])
             else:
-                pass
-        else:
-            self.__bot_controller.chat('Сomponent is not available for configuration')
-    
+                self.__bot_controller.chat('Сomponent is not available for configuration')
+        except IndexError:
+            # self.__bot_controller.chat('Please, make sure you entered the query correctly')
+            self.__bot_controller.chat('Possible options of welcome: on / off / status / message "{text}"')
+
     def __isAdmin(self, user_id: str) -> bool:
         if (user_id in self.__room_state.mod_ids) != True:
             self.__bot_controller.chat('You\'re not moderator or admin')
             return False
         else: return True
+
+    def __noArguments(self, payload) -> bool:
+        if payload == None:
+            self.__bot_controller.chat('Config: welcome')
+            return True
+        else: 
+            return False
+
+    def __configure_welcome(self, args: Optional[List[str]]) -> None:
+            if 'on' in args[0]:
+                self.__configurator.welcome_enable(True)
+                self.__bot_controller.chat('Welcome message has been enabled')
+            elif 'off' in args[0]:
+                self.__configurator.welcome_enable(False)
+                self.__bot_controller.chat('Welcome message has been disabled')
+            elif 'status' in args[0]:
+                if self.__configurator.welcome_status == True:
+                    self.__bot_controller.chat('Welcome text message is ON')
+                    self.__bot_controller.chat('Message: ' + self.__configurator.welcome_message)
+                else:
+                    self.__bot_controller.chat('Welcome text message is OFF')
+                    self.__bot_controller.chat('Message: ' + self.__configurator.welcome_message)
+            elif 'message' in args[0]:
+                self.__configurator.welcome_set_meessage(' '.join(args[1:]))
+                self.__bot_controller.chat('Message has been successfully changed')
+            else:
+                self.__bot_controller.chat('Possible options of welcome: on / off / status / message "{text}"')

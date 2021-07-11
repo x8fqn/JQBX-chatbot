@@ -1,5 +1,5 @@
-import os, logging, shlex
-from typing import List, Dict, Union
+import logging, shlex
+from typing import List, Dict, Optional
 
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.web_socket_message_handlers.command_processors.command_processors import command_processors
@@ -41,15 +41,14 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         return payload.get('user', {}).get('id', None)
 
     def __isValidUser(self, user_id: str) -> bool:
-        if user_id is None or user_id == self.__config.get('spotify_user_id'): 
+        if user_id is None or user_id == self.__bot_controller.user_id: 
             return False
         else: return True
-
-    def __payloadProcess(self, payload: str) -> Union[str, List[str]]:
-        if payload.find(' ') == -1: return payload
-        else: return shlex.split(payload)
-
+    
     def __isValidMessage(self, message: str) -> bool:
         if not (message.startswith('/') and len(message) > 1):
             return False
         else: return True
+
+    def __payloadProcess(self, payload: str) -> Optional[List[str]]:
+        return shlex.split(payload)

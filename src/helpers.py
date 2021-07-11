@@ -17,6 +17,7 @@ thumbDownImage: str = None, djImage: str = None) -> dict:
         user.update({'thumbsUpImage': thumbUpImage})
     if thumbDownImage: 
         user.update({'thumbsDownImage': thumbDownImage})
+    return user
 
 def get_main_dir() -> str:
     return os.getcwd()

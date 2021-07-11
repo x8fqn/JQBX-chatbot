@@ -17,14 +17,15 @@ class UrbanCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Get the urban dictionary definition of a word'
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
-        if not payload:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+        if not args:
             self.__bot_controller.chat('Please provide a search query')
             return
+        args = ' '.join(args)
         client = UrbanClient()
-        dfns: List[UrbanDefinition] = cast(List[UrbanDefinition], client.get_definition(payload))
+        dfns: List[UrbanDefinition] = cast(List[UrbanDefinition], client.get_definition(args))
         if not dfns:
-            self.__bot_controller.chat('No definition found for "%s"' % payload)
+            self.__bot_controller.chat('No definition found for "%s"' % args)
             return
         dfn = dfns[0]
         self.__bot_controller.chat([

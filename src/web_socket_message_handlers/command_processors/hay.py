@@ -25,34 +25,25 @@ class HayProcessor(AbstractCommandProcessor):
             Interroom messaging. Using: /hay [roomHandle or roomID] [message]
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
-        if payload in {'', None}:
-            return self.__bot_controller.chat('[Hay] :email::x: Not enough arguments')
-        else:
-            args = payload.split(' ', 1)
-            if len(args) <= 1:
-                return self.__bot_controller.chat('[Hay] :email::x: Not enough arguments')
-        room_id = args[0]
-        room_id_req = json.loads(requests.get('https://jqbx.fm/rooms/search/title/%s/0' % room_id).text)
-        user_id_req = json.loads(requests.get('https://jqbx.fm/user/spotify:user:%s' % user_id).text)
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+        room_input = args[0]
+        message = ' '.join(args[1:])
+        room_id_request = json.loads(requests.get('https://jqbx.fm/rooms/search/title/%s/0' % room_input).text)
+        user_id_request = json.loads(requests.get('https://jqbx.fm/user/spotify:user:%s' % user_id).text)
         
-        username_str = '%s (%s)' % (user_id_req['username'], self.__room_state.room_title)
-        msg = args[1]
-            
-        if room_id_req['total'] == 1:
-            self.__bot_controller.interroom_chat(room_id_req['rooms'][0]['_id'], username_str, msg)
-            self.__bot_controller.chat('[Hay] :email::white_check_mark: Sent to a room called "%s" with %s users' % (
-                room_id_req['rooms'][0]['title'], str(len(room_id_req['rooms'][0]['users']))))
-            return
-        if room_id_req['total'] > 1:
-            self.__bot_controller.chat('[Hay] :email::x: So many rooms with that name')
-            return
-        elif room_id_req['total'] <= 0:
-            if len(room_id) > 23:
-                self.__bot_controller.interroom_chat(room_id, username_str, msg)
-                self.__bot_controller.chat('[Hay] :email::id: Trying to send by room ID')
-            else:
-                self.__bot_controller.chat('[Hay] :email::id::x: Room ID is invalid')
-            return
-
-
+        message_username = '%s (%s)' % (user_id_request['username'], self.__room_state.room_title)
+        try:
+            if room_id_request['total'] == 1:
+                self.__bot_controller.interroom_chat(room_id_request['rooms'][0]['_id'], message_username, message)
+                self.__bot_controller.chat(':email::white_check_mark: Sent to a room called "%s" with %s users' % (
+                    room_id_request['rooms'][0]['title'], str(len(room_id_request['rooms'][0]['users']))))
+            elif room_id_request['total'] > 1:
+                self.__bot_controller.chat(':email::x: So many rooms with that name')
+            elif room_id_request['total'] <= 0:
+                if len(room_input) > 23:
+                    self.__bot_controller.interroom_chat(room_input, message_username, message)
+                    self.__bot_controller.chat(':email::id: Sending by room ID')
+                else:
+                    self.__bot_controller.chat(':email::id::x: Room ID is invalid')
+        except IndexError:
+            self.__bot_controller.chat(':email::x: Not enough arguments')

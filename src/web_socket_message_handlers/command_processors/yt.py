@@ -21,7 +21,7 @@ class YtCommandProcessor(AbstractCommandProcessor):
             Listen to this tune on YouTube 
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         result = Youtube.searchTune(self.__room_state.current_track['name'], 
             [artist['name'] for artist in self.__room_state.current_track['artists']],
             self.__room_state.current_track['duration_ms'] // 1000)

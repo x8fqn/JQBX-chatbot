@@ -1,14 +1,18 @@
-import os
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
-from src.configuration import AbstractConfiguration, Configuration
+from src.config import AbstractConfig, Config
 from src.helpers import get_bot_user, get_config_path
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
 from src.web_socket_message import WebSocketMessage
 
 
 class AbstractBotController(ABC):
+    @property
+    @abstractmethod
+    def user_id(self) -> str:
+        pass
+
     @abstractmethod
     def chat(self, message: Union[str, List[str]]) -> None:
         pass
@@ -53,15 +57,33 @@ class AbstractBotController(ABC):
     def reset_vote(self) -> None:
         pass
 
+    @abstractmethod
+    def welcome_set_message(self, message: str) -> None:
+        pass
+
+    @abstractmethod
+    def welcome_enable(self, enable: bool) -> None:
+        pass
+
+    @property
+    @abstractmethod
+    def welcome_message(self) -> bool:
+        pass
+
+    @property
+    @abstractmethod
+    def welcome_isEnabled(self) -> bool:
+        pass
 
 class BotController(AbstractBotController):
     __instance: Optional['BotController'] = None
 
-    def __init__(self, config: AbstractConfiguration = Configuration('bot_main'),
+    def __init__(self, config: AbstractConfig = Config('bot_main'),
                  web_socket_client: AbstractWebSocketClient = WebSocketClient.get_instance()):
         if BotController.__instance:
             raise Exception('Use get_instance() instead!')
         self.__config = config
+        self.__bot_user_id = self.__config.get('user_id')
         self.__bot_user = get_bot_user(self.__config.get('username'), self.__config.get('user_id'), self.__config.get('image_url'), 
             self.__config.get('thumbsUpImage_url'), self.__config.get('thumbsDownImage_url'), self.__config.get('djImage_url'))
         self.__web_socket_client = web_socket_client
@@ -75,10 +97,14 @@ class BotController(AbstractBotController):
             BotController()
         return BotController.__instance
 
+    @property
+    def user_id(self) -> str:
+        return self.__bot_user.get('id')
+
     def chat(self, message: Union[str, List[str]]) -> None:
         lines = message if isinstance(message, list) else [message]
         payload = {
-            'roomId': self.__config.get()['jqbx_room_id'],
+            'roomId': self.__config.get('room_id'),
             'user': self.__bot_user,
             'message': {
                 'message': ' <br/> '.join(lines),
@@ -104,7 +130,7 @@ class BotController(AbstractBotController):
     def whisper(self, message: str, recipient: dict) -> None:
         bot_user = self.__bot_user
         payload = {
-            'roomId': self.__config.get()['jqbx_room_id'],
+            'roomId': self.__config.get('room_id'),
             'user': bot_user,
             'message': {
                 'message': '%s' % message,
@@ -141,7 +167,7 @@ class BotController(AbstractBotController):
         if self.__doped or self.__noped:
             return
         self.__web_socket_client.send(WebSocketMessage(label='thumbsUp', payload={
-            'roomId': self.__config.get()['jqbx_room_id'],
+            'roomId': self.__config.get('room_id'),
             'user': self.__bot_user
         }))
         self.__doped = True
@@ -150,7 +176,7 @@ class BotController(AbstractBotController):
         if self.__doped or self.__noped:
             return
         self.__web_socket_client.send(WebSocketMessage(label='thumbsDown', payload={
-            'roomId': self.__config.get()['jqbx_room_id'],
+            'roomId': self.__config.get('room_id'),
             'user': self.__bot_user
         }))
         self.__noped = True
@@ -159,7 +185,7 @@ class BotController(AbstractBotController):
         if self.__starred:
             return
         self.__web_socket_client.send(WebSocketMessage(label='starTrack', payload={
-            'roomId': self.__config.get()['jqbx_room_id'],
+            'roomId': self.__config.get('room_id'),
             'user': self.__bot_user
         }))
         self.__starred = True
@@ -180,3 +206,19 @@ class BotController(AbstractBotController):
         self.__doped = False
         self.__noped = False
         self.__starred = False
+
+    def welcome_set_message(self, message: str) -> None:
+        self.__config.set('welcome_message', message)
+
+    def welcome_enable(self, enable: bool) -> None:
+        self.__config.set('welcome_enabled', enable)
+    
+    @property
+    def welcome_message(self) -> str:
+        message = self.__config.get('welcome_message')
+        return 'No message' if message == None else message
+    
+    @property
+    def welcome_isEnabled(self) -> bool:
+        status = self.__config.get('welcome_enabled')
+        return False if status == None else status

@@ -3,7 +3,7 @@ from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 from src.helpers import get_config_path
 
-class AbstractConfiguration(ABC):
+class AbstractConfig(ABC):
     @abstractmethod
     def get(self, key: str = None):
         pass
@@ -24,7 +24,7 @@ class AbstractConfiguration(ABC):
     def remove(self, key: str, list_item: Union[List[str], int, str] = None) -> bool:
         pass
 
-class Configuration(AbstractConfiguration):
+class Config(AbstractConfig):
     def __init__(self, name: str) -> None:
         self.__name = name
         self.__path = get_config_path()

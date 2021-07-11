@@ -22,7 +22,7 @@ class RockOutCommandProcessor(AbstractCommandProcessor):
             Votes for the bot to rock out (dope) a song. Requires 3 people.
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         self.__voting_machine.vote(user_id, self.__dope_and_add_to_playlist)
 
     def __dope_and_add_to_playlist(self, bot_controller: AbstractBotController) -> None:

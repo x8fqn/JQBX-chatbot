@@ -19,7 +19,7 @@ class NockOutCommandProcessor(AbstractCommandProcessor):
             Votes for the bot to downvote (nope) a song. Requires 3 people.
         '''
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None:
         self.__voting_machine.vote(user_id, self.__nope)
 
     def __nope(self, bot_controller: AbstractBotController) -> None:
