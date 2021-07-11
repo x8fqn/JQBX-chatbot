@@ -8,12 +8,19 @@ class Configure:
         self.__bot_controller.welcome_set_message(msg)
 
     def welcome_enable(self, enable: bool) -> None:
-        self.__bot_controller.welcome_enable(enable)
+        self.__bot_controller.welcome_set_enable(enable)
+
+    def welcome_whisper(self, enable: bool) -> None:
+        self.__bot_controller.welcome_set_whisper(enable)
 
     @property
-    def welcome_status(self) -> bool:
+    def welcome_isEnabled(self) -> bool:
         return self.__bot_controller.welcome_isEnabled
 
     @property
-    def welcome_message(self) -> bool:
+    def welcome_message(self) -> str:
         return self.__bot_controller.welcome_message
+
+    @property
+    def welcome_isWhisper(self) -> str:
+        return self.__bot_controller.welcome_isWhisper

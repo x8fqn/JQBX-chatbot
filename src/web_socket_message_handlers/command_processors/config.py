@@ -28,7 +28,7 @@ class ConfigProcessor(AbstractCommandProcessor):
         if self.__noArguments(args): return
 
         try:
-            if args[0] in 'welcome':
+            if 'welcome' in args[0]:
                 self.__configure_welcome(args[1:])
             else:
                 self.__bot_controller.chat('Сomponent is not available for configuration')
@@ -57,14 +57,21 @@ class ConfigProcessor(AbstractCommandProcessor):
                 self.__configurator.welcome_enable(False)
                 self.__bot_controller.chat('Welcome message has been disabled')
             elif 'status' in args[0]:
-                if self.__configurator.welcome_status == True:
-                    self.__bot_controller.chat('Welcome text message is ON')
-                    self.__bot_controller.chat('Message: ' + self.__configurator.welcome_message)
-                else:
-                    self.__bot_controller.chat('Welcome text message is OFF')
-                    self.__bot_controller.chat('Message: ' + self.__configurator.welcome_message)
+                msg = 'Status: ' + ('enabled' if self.__bot_controller.welcome_isEnabled else 'disabled') + '; '
+                msg += 'Whisper: ' + ('yes' if self.__bot_controller.welcome_isWhisper else 'no') + '; '
+                msg += 'Message: '
+                self.__bot_controller.chat(msg)
+                self.__bot_controller.chat('"' + self.__configurator.welcome_message + '"')
             elif 'message' in args[0]:
                 self.__configurator.welcome_set_meessage(' '.join(args[1:]))
                 self.__bot_controller.chat('Message has been successfully changed')
+            elif 'whisper' in args[0]:
+                if 'on' in args[1]:
+                    self.__configurator.welcome_whisper(True)
+                    self.__bot_controller.chat('Welcome whisper mode has been enabled')
+                elif 'off' in args[1]:
+                    self.__bot_controller.chat('Welcome whisper mode has been disabled')
+                    self.__configurator.welcome_whisper(False)
+
             else:
                 self.__bot_controller.chat('Possible options of welcome: on / off / status / message "{text}"')

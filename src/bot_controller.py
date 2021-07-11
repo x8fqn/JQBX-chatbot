@@ -62,17 +62,26 @@ class AbstractBotController(ABC):
         pass
 
     @abstractmethod
-    def welcome_enable(self, enable: bool) -> None:
+    def welcome_set_enable(self, enable: bool) -> None:
+        pass
+
+    @abstractmethod
+    def welcome_set_whisper(self, enable: bool) -> None:
         pass
 
     @property
     @abstractmethod
-    def welcome_message(self) -> bool:
+    def welcome_message(self) -> str:
         pass
 
     @property
     @abstractmethod
     def welcome_isEnabled(self) -> bool:
+        pass
+
+    @property
+    @abstractmethod
+    def welcome_isWhisper(self) -> bool:
         pass
 
 class BotController(AbstractBotController):
@@ -208,17 +217,25 @@ class BotController(AbstractBotController):
         self.__starred = False
 
     def welcome_set_message(self, message: str) -> None:
-        self.__config.set('welcome_message', message)
+        self.__config.set('welcome_message', message.strip())
 
-    def welcome_enable(self, enable: bool) -> None:
+    def welcome_set_enable(self, enable: bool) -> None:
         self.__config.set('welcome_enabled', enable)
+
+    def welcome_set_whisper(self, enable: bool) -> None:
+        self.__config.set('welcome_whisper', enable)
     
     @property
     def welcome_message(self) -> str:
         message = self.__config.get('welcome_message')
-        return 'No message' if message == None else message
+        return 'No message' if message == (None or '') else message
     
     @property
     def welcome_isEnabled(self) -> bool:
         status = self.__config.get('welcome_enabled')
+        return False if status == None else status
+    
+    @property
+    def welcome_isWhisper(self) -> bool:
+        status = self.__config.get('welcome_whisper')
         return False if status == None else status

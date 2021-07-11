@@ -47,10 +47,13 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
             ]
 
         if 'new_users' in locals():
-            if self.__welcome_config.update()['enabled'] == True:
+            if self.__bot_controller.welcome_isEnabled:
                 for user in new_users:
-                    self.__bot_controller.whisper(self.__welcome_config.get()['message'], user)
-        
+                    if self.__bot_controller.welcome_isWhisper:
+                        self.__bot_controller.whisper(self.__bot_controller.welcome_message, user)
+                    else:
+                        self.__bot_controller.chat(self.__bot_controller.welcome_message)
+
         if 'users' in payload:
             self.__room_state.set_users(users)
 
