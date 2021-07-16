@@ -33,7 +33,9 @@ class TopRoomsProcessor(AbstractCommandProcessor):
         self.__args_processor(args, msg)
 
     def __args_processor(self, args: Optional[List[str]], messages: Optional[List[str]]):
-        if 'mobile' and 'list' in args:
+        if args == None: 
+            self.__bot_controller.chat('; '.join(messages))
+        elif 'mobile' and 'list' in args:
             for item in messages:
                 self.__bot_controller.chat(item)
                 sleep(0.1)
