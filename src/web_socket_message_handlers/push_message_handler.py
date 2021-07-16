@@ -30,15 +30,18 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
 
         message_parts = message.split(' ', 1)
         keyword = message_parts[0].lower().split('/', 1)[-1]
-        payload = None if len(message_parts) == 1 else self.__payloadProcess(message_parts[1])
+        users_payload = None if len(message_parts) == 1 else self.__payloadProcess(message_parts[1])
 
-        logging.info('%s called by %s (%s)' % (repr(message_parts), payload['user']['username'] or user_id))
+        logging.info('%s called by %s' % (repr(message_parts), (self.__getUsername(payload) or user_id)))
         command_processor = self.__command_processors.get(keyword)
         if command_processor:
-            command_processor.process(user_id, payload)
+            command_processor.process(user_id, users_payload)
 
-    def __getUserID(self, payload: str):
+    def __getUserID(self, payload: dict):
         return payload.get('user', {}).get('id', None)
+
+    def __getUsername(self, payload: dict):
+        return payload.get('user', {}).get('username')
 
     def __isValidUser(self, user_id: str) -> bool:
         if user_id is None or user_id == self.__bot_controller.user_id: 
