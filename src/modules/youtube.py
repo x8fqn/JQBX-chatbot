@@ -12,7 +12,7 @@ class Youtube:
             durationYouTube = Youtube.durationToTimestamp(video['duration'])
             durationSpotify = lenght
             if -2 <= (durationYouTube - durationSpotify) <= 2:
-                result = {'title': video['title'], 'url': 'https://youtube.com/%s' % video['url_suffix'], 
+                result = {'title': video['title'], 'url': 'https://youtube.com%s' % video['url_suffix'], 
                     'duration': video['duration'], 'thumbnail': video['thumbnails'][0]}
                 break
         if 'result' in locals():

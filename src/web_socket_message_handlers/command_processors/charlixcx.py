@@ -31,8 +31,7 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
                 url TEXT
         )''')
         try:
-            if args != None:
-                args = args.strip().split()
+            if args != []:
                 if 'add' in args[0]:
                     if args[1].startswith(('http://','https://')) and args[1].endswith('.gif'):
                         gif_url = args[1]

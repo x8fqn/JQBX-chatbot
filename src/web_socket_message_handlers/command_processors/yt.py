@@ -26,6 +26,6 @@ class YtCommandProcessor(AbstractCommandProcessor):
             [artist['name'] for artist in self.__room_state.current_track['artists']],
             self.__room_state.current_track['duration_ms'] // 1000)
         if result != False:
-            self.__bot_controller.chat('%s %s' % (result['thumbnail'], result['url']))
+            self.__bot_controller.chat('%s#.jpg %s' % (result['thumbnail'], result['url']))
         else:
             self.__bot_controller.chat('Couldn\'t find this on YouTube')
