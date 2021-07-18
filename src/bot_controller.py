@@ -1,16 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
-from src.config import AbstractConfig, Config
-from src.helpers import get_bot_user, get_config_path
+from src.settings import AbstractSettings, Settings
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
 from src.web_socket_message import WebSocketMessage
 
 
 class AbstractBotController(ABC):
-    @property
     @abstractmethod
-    def user_id(self) -> str:
+    def update_user(self) -> None:
         pass
 
     @abstractmethod
@@ -57,44 +55,15 @@ class AbstractBotController(ABC):
     def reset_vote(self) -> None:
         pass
 
-    @abstractmethod
-    def welcome_set_message(self, message: str) -> None:
-        pass
-
-    @abstractmethod
-    def welcome_set_enable(self, enable: bool) -> None:
-        pass
-
-    @abstractmethod
-    def welcome_set_whisper(self, enable: bool) -> None:
-        pass
-
-    @property
-    @abstractmethod
-    def welcome_message(self) -> str:
-        pass
-
-    @property
-    @abstractmethod
-    def welcome_isEnabled(self) -> bool:
-        pass
-
-    @property
-    @abstractmethod
-    def welcome_isWhisper(self) -> bool:
-        pass
 
 class BotController(AbstractBotController):
     __instance: Optional['BotController'] = None
 
-    def __init__(self, config: AbstractConfig = Config('bot_main'),
-                 web_socket_client: AbstractWebSocketClient = WebSocketClient.get_instance()):
+    def __init__(self, web_socket_client: AbstractWebSocketClient = WebSocketClient.get_instance(),
+    settings: AbstractSettings = Settings.get_instance()):
         if BotController.__instance:
             raise Exception('Use get_instance() instead!')
-        self.__config = config
-        self.__bot_user_id = self.__config.get('user_id')
-        self.__bot_user = get_bot_user(self.__config.get('username'), self.__config.get('user_id'), self.__config.get('image_url'), 
-            self.__config.get('thumbsUpImage_url'), self.__config.get('thumbsDownImage_url'), self.__config.get('djImage_url'))
+        self.__settings = settings
         self.__web_socket_client = web_socket_client
         self.__doped: bool = False
         self.__noped: bool = False
@@ -106,18 +75,21 @@ class BotController(AbstractBotController):
             BotController()
         return BotController.__instance
 
-    @property
-    def user_id(self) -> str:
-        return self.__bot_user.get('id')
+    def update_user(self) -> None:
+        payload = {
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user
+        }
+        self.__web_socket_client.send(WebSocketMessage(label='updateUserInfo', payload=payload))
 
     def chat(self, message: Union[str, List[str]]) -> None:
         lines = message if isinstance(message, list) else [message]
         payload = {
-            'roomId': self.__config.get('room_id'),
-            'user': self.__bot_user,
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user,
             'message': {
                 'message': ' <br/> '.join(lines),
-                'user': self.__bot_user,
+                'user': self.__settings.user,
                 'selectingEmoji': False
             }
         }
@@ -126,10 +98,10 @@ class BotController(AbstractBotController):
     def interroom_chat(self, room_id: str, username: str, message: str) -> None:
         payload = {
             'roomId': room_id,
-            'user': self.__bot_user,
+            'user': self.__settings.user,
             'message': {
                 'message': message,
-                'user': self.__bot_user,
+                'user': self.__settings.user,
                 'selectingEmoji': False
             }
         }
@@ -137,9 +109,9 @@ class BotController(AbstractBotController):
         self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
 
     def whisper(self, message: str, recipient: dict) -> None:
-        bot_user = self.__bot_user
+        bot_user = self.__settings.user
         payload = {
-            'roomId': self.__config.get('room_id'),
+            'roomId': self.__settings.room_id,
             'user': bot_user,
             'message': {
                 'message': '%s' % message,
@@ -153,31 +125,12 @@ class BotController(AbstractBotController):
         }
         self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
 
-    def updateUsername(self, username: str) -> None:
-        self.__bot_user.update({'username': username})
-        payload = self.__bot_user
-        self.__web_socket_client.send(WebSocketMessage(label='updateUserInfo', payload=payload))
-
-    def updateImage(self, image_link: str, type: int) -> None:
-        if type == 0:
-            typeName = 'image'
-        elif type == 1:
-            typeName = 'thumbsUpImage'
-        elif type == 2:
-            typeName = 'thumbsDownImage'
-        elif type == 3:
-            typeName = 'djImage'
-        self.__bot_user.update({typeName: image_link})
-        self.__config.set(typeName + '_url', image_link)
-        payload = self.__bot_user
-        self.__web_socket_client.send(WebSocketMessage(label='updateUserInfo', payload=payload))
-
     def dope(self) -> None:
         if self.__doped or self.__noped:
             return
         self.__web_socket_client.send(WebSocketMessage(label='thumbsUp', payload={
-            'roomId': self.__config.get('room_id'),
-            'user': self.__bot_user
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user
         }))
         self.__doped = True
 
@@ -185,8 +138,8 @@ class BotController(AbstractBotController):
         if self.__doped or self.__noped:
             return
         self.__web_socket_client.send(WebSocketMessage(label='thumbsDown', payload={
-            'roomId': self.__config.get('room_id'),
-            'user': self.__bot_user
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user
         }))
         self.__noped = True
 
@@ -194,8 +147,8 @@ class BotController(AbstractBotController):
         if self.__starred:
             return
         self.__web_socket_client.send(WebSocketMessage(label='starTrack', payload={
-            'roomId': self.__config.get('room_id'),
-            'user': self.__bot_user
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user
         }))
         self.__starred = True
 
@@ -215,27 +168,3 @@ class BotController(AbstractBotController):
         self.__doped = False
         self.__noped = False
         self.__starred = False
-
-    def welcome_set_message(self, message: str) -> None:
-        self.__config.set('welcome_message', message.strip())
-
-    def welcome_set_enable(self, enable: bool) -> None:
-        self.__config.set('welcome_enabled', enable)
-
-    def welcome_set_whisper(self, enable: bool) -> None:
-        self.__config.set('welcome_whisper', enable)
-    
-    @property
-    def welcome_message(self) -> str:
-        message = self.__config.get('welcome_message')
-        return 'No message' if message == (None or '') else message
-    
-    @property
-    def welcome_isEnabled(self) -> bool:
-        status = self.__config.get('welcome_enabled')
-        return False if status == None else status
-    
-    @property
-    def welcome_isWhisper(self) -> bool:
-        status = self.__config.get('welcome_whisper')
-        return False if status == None else status

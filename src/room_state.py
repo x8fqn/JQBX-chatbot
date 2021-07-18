@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from src.bot_controller import BotController, AbstractBotController
-from src.track_history import AbstractTrackHistory, TrackHistory
+from src.db_controllers.track_history import AbstractTrackHistory, TrackHistory
 from dateutil import parser
 
 
@@ -86,11 +86,11 @@ class RoomState(AbstractRoomState):
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
         self.__track_history = track_history
-        self.__track_history.connect()
         RoomState.__instance = self
 
     @staticmethod
-    def get_instance(bot_controller: AbstractBotController = BotController.get_instance()) -> 'RoomState':
+    def get_instance(bot_controller: AbstractBotController = BotController.get_instance(),
+    track_history: AbstractTrackHistory = TrackHistory()) -> 'RoomState':
         if RoomState.__instance is None:
             RoomState(bot_controller)
         return RoomState.__instance

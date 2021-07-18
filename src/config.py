@@ -25,7 +25,7 @@ class AbstractConfig(ABC):
         pass
 
 class Config(AbstractConfig):
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str = 'config') -> None:
         self.__name = name
         self.__path = get_config_path()
         self.__filename = self.__name + '.json'

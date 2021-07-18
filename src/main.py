@@ -1,24 +1,32 @@
 import logging, time
 import traceback
-from src.config import Config, AbstractConfig
-from src.helpers import get_bot_user
+from src.settings import AbstractSettings, Settings
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.web_socket_message_handlers import web_socket_message_handler_map
 
+class UnexpectedStop(Exception): 
+    pass
 
-def main(web_socket_client: AbstractWebSocketClient, 
-         config: AbstractConfig = Config('bot_main')):
-    logging.basicConfig(level=config.get('log_level'), format='%(asctime)s - %(module)s -> %(funcName)s - [%(levelname)s] - %(message)s')
-    def __on_open() -> None:
+class Main():
+    def __init__(self, web_socket_client: AbstractWebSocketClient,
+    settings: AbstractSettings = Settings.get_instance()) -> None:
+        self.ws_client = web_socket_client
+        self.settings = settings
+        logging.basicConfig(level=self.settings.log_level, format='%(asctime)s - %(module)s -> %(funcName)s - [%(levelname)s] - %(message)s')
+
+    def run(self):
+        self.ws_client.register(self.__on_open, self.__on_message, self.__on_error, self.__on_close)
+        self.ws_client.run()
+
+    def __on_open(self) -> None:
         logging.info('Websocket connection OPENED')
-        web_socket_client.send(WebSocketMessage(label='join', payload={
-            'roomId': config.get('room_id'),
-            'user': get_bot_user(config.get('username'), config.get('user_id'), config.get('image_url'), 
-            config.get('thumbsUpImage_url'), config.get('thumbsDownImage_url'), config.get('djImage_url'))
+        self.ws_client.send(WebSocketMessage(label='join', payload={
+            'roomId': self.settings.room_id,
+            'user': self.settings.user
         }))
 
-    def __on_message(message: WebSocketMessage) -> None:
+    def __on_message(self, message: WebSocketMessage) -> None:
         logging.debug('Incoming Message', message.as_dict())
         try:
             handler = web_socket_message_handler_map.get(message.label, None)
@@ -27,27 +35,24 @@ def main(web_socket_client: AbstractWebSocketClient,
         except Exception as e:
             logging.error(e)
 
-    def __on_error(error: BaseException) -> None:
+    def __on_error(self, error: BaseException) -> None:
         logging.error('Error: %s \n Traceback: %s' % (str(error), traceback.format_tb(error.__traceback__)))
 
-    def __on_close() -> None:
+    def __on_close(self) -> None:
         logging.info('Websocket connection CLOSED')
-
-    while True:
-        web_socket_client.register(__on_open, __on_message, __on_error, __on_close)
-        was_keyboard_interrupt = not web_socket_client.run()
-        if was_keyboard_interrupt:
-            break
-        logging.error(Exception('Websocket client stopped. Restarting.'))
+        raise UnexpectedStop()
 
 
 if __name__ == '__main__':
     while True:
-        main(WebSocketClient.get_instance())
+        bot = Main(WebSocketClient.get_instance())
         try:
-            logging.warning('Restarting. Send again to exit (5 sec.)')
+            bot.run()
+            logging.warning('Restarting. Send stop signal to exit (5 sec.)')
             time.sleep(5)
         except KeyboardInterrupt:
             logging.warning('Keyboard interrupted, stopping')
             break
+        except UnexpectedStop:
+            logging.error('Unexpected stop! :(')
     logging.info('Program work is ended!')

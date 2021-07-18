@@ -29,23 +29,23 @@ class AbstractJQBXAPI(ABC):
 
 
 class JQBXAPI(AbstractJQBXAPI):
-    def firsts(spotify_uri: str) -> dict:
+    def firsts(self, spotify_uri: str) -> dict:
         # spotify:track:TRACK_ID
         return requests.get('https://jqbx.fm/tracks/first/%s' % spotify_uri).json()
 
-    def user(user_id: str) -> dict:
+    def user(self, user_id: str) -> dict:
         # spotify:user:USER_ID
         return requests.get('https://jqbx.fm/user/%s' % user_id).json()
 
-    def room(room_id: str) -> dict:
+    def room(self, room_id: str) -> dict:
         return requests.get('https://jqbx.fm/room/%s' % room_id).json()
 
-    def roomsActive(page = 0) -> dict:
+    def roomsActive(self, page = 0) -> dict:
         return requests.get('https://jqbx.fm/active-rooms/%s' % str(page)).json()
 
-    def roomsAll(page: int = 0) -> dict:
+    def roomsAll(self, page: int = 0) -> dict:
         return requests.get('https://jqbx.fm/active-rooms/%s' % str(page)).json()
     
-    def promotions() -> dict:
+    def promotions(self) -> dict:
         return requests.get('https://jqbx.fm/promotions').json()
 

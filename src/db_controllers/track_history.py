@@ -1,15 +1,14 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 import sqlite3, os
 from typing import Optional
 from src.helpers import get_config_path
 
 class AbstractTrackHistory(ABC):
-    def connect(self, name: str = 'trackHistory') -> bool:
-        pass
-
+    @abstractmethod
     def add_track(self, name: str, artist: str, track_uri: str, timestamp: float, user_id: str) -> bool:
         pass
 
+    @abstractmethod
     def update_track_votes(self, timestamp: float, thumbUp_count: int, thumbDown_count: int, star_count: int, max_user_count: int) -> bool:
         pass
 
@@ -17,19 +16,16 @@ class AbstractTrackHistory(ABC):
 class TrackHistory(AbstractTrackHistory):
     __instance: Optional['TrackHistory'] = None
 
-    def __init__(self) -> None:
+    def __init__(self, name: str = 'trackHistory'):
         TrackHistory.__instance = self
+        self.__connection = sqlite3.connect(os.path.join(get_config_path(), name + '.sqlite'))
+        self.__initialize_table(self.__connection)
 
     @staticmethod
     def get_instance() -> 'TrackHistory':
         if TrackHistory.__instance is None:
             TrackHistory()
         return TrackHistory.__instance
-
-    def connect(self, name: str = 'trackHistory') -> bool:
-        self.__connection = sqlite3.connect(get_config_path() + os.sep + name + '.sqlite')
-        self.__initialize_table(self.__connection)
-        return True
 
     def __initialize_table(self, connection: sqlite3.Connection):
         query = """

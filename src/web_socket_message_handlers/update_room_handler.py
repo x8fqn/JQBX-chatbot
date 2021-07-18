@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from src.bot_controller import AbstractBotController, BotController
-from src.config import AbstractConfig, Config
+from src.settings import AbstractSettings, Settings
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
@@ -11,12 +11,10 @@ from src.web_socket_message_handlers.abstract_web_socket_message_handler import 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
-                 config: AbstractConfig = Config('bot_main'),
-                 welcome_config: AbstractConfig = Config('welcome')):
+                 settings: AbstractSettings = Settings.get_instance()):
         self.__bot_controller = bot_controller
         self.__room_state = room_state
-        self.__config = config
-        self.__welcome_config = welcome_config
+        self.__settings = settings
 
     @property
     def message_label(self) -> str:
@@ -42,17 +40,17 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         if self.__room_state.users:
             new_users = [
                 user for user in users
-                if user['id'] != self.__config.get('user_id')
+                if user['id'] != self.__settings.user_id
                    and user['id'] not in [y['id'] for y in self.__room_state.users]
             ]
 
         if 'new_users' in locals():
-            if self.__bot_controller.welcome_isEnabled:
+            if self.__settings.welcome_isEnabled:
                 for user in new_users:
-                    if self.__bot_controller.welcome_isWhisper:
-                        self.__bot_controller.whisper(self.__bot_controller.welcome_message, user)
+                    if self.__settings.welcome_isWhisper:
+                        self.__bot_controller.whisper(self.__settings.welcome_message, user)
                     else:
-                        self.__bot_controller.chat(self.__bot_controller.welcome_message)
+                        self.__bot_controller.chat(self.__settings.welcome_message)
 
         if 'users' in payload:
             self.__room_state.set_users(users)

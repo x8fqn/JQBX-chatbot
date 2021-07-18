@@ -40,6 +40,8 @@ class WebSocketClient(AbstractWebSocketClient):
                  on_error: Callable[[Any], None], on_close: Callable[[], None]) -> None:
         self.__ws.on_open = lambda _: on_open()
         self.__ws.on_message = lambda _, raw_message: on_message(self.__parse(raw_message))
+        self.__ws.on_error = lambda _, error: on_error(error)
+        self.__ws.on_close = lambda _: on_close()
 
     def run(self) -> None:
         self.__ws.run_forever()

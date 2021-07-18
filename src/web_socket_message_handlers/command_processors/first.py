@@ -6,13 +6,15 @@ from src.jqbx_api import AbstractJQBXAPI, JQBXAPI
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from src.config import AbstractConfig, Config
+from src.settings import AbstractSettings, Settings
 
 class FirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
+                 settings: AbstractSettings = Settings.get_instance(),
                  jqbx_api: AbstractJQBXAPI = JQBXAPI()):
         self.__bot_controller = bot_controller
+        self.__settings = settings
         self.__room_state = room_state
         self.__api = jqbx_api
 
@@ -47,14 +49,18 @@ class FirstProcessor(AbstractCommandProcessor):
                 's' if int(firstDB['stars']) % 10 != 1 else '',
                 firstDB['thumbsDown'],
                 's' if int(firstDB['thumbsDown']) % 10 != 1 else '')]
-        if user_id == str(jqbx_first_request['user']['uri']).replace('spotify:user:',''):
-            msg.insert(0, ':cake:')
+
+        if (user_id == str(jqbx_first_request['user']['uri']).replace('spotify:user:','')):
+            if jqbx_first_request['room']['_id'] == self.__settings.room_id:
+                msg.insert(0, ':cake:')
+            else:
+                msg.insert(0, ':cookie:')
         self.__bot_controller.chat(' '.join(msg))
 
 class AutoFirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-                 config: AbstractConfig = Config('bot_main')):
-        self.__config = config
+    settings: AbstractSettings = Settings.get_instance()):
+        self.__settings = settings
         self.__bot_controller = bot_controller
 
     @property
@@ -63,19 +69,12 @@ class AutoFirstProcessor(AbstractCommandProcessor):
 
     @property
     def help(self) -> str:
-        return 'Switch auto-first on every tune'
+        return 'Switch "first" on every tune'
 
     def process(self, user_id: str, args: Optional[str]) -> None:
-        try:
-            if self.__config.get()['auto-first'] == True:
-                self.__config.set('auto-first', False)
-                return self.__bot_controller.chat('Auto-first deactivated')
-            elif self.__config.get()['auto-first'] == False:
-                self.__config.set('auto-first', True)
-                return self.__bot_controller.chat('Auto-first activated')
-            elif self.__config.get()['auto-first'] == None:
-                self.__config.set('auto-first', True)
-                return self.__bot_controller.chat('Auto-first activated')
-        except:
-            self.__config.set('auto-first', True)
+        if self.__settings.autofirst_isEnabled:
+            self.__settings.autofirst_set_enable(False)
+            return self.__bot_controller.chat('Auto-first deactivated')
+        else:
+            self.__settings.autofirst_set_enable(True)
             return self.__bot_controller.chat('Auto-first activated')

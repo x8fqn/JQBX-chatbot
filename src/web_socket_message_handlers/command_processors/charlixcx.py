@@ -30,20 +30,20 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
                 publisher_id TEXT,
                 url TEXT
         )''')
-        if args != None:
-            args = args.strip().split()
-            if args[0] in {'add'}:
-                if len(args) > 1 and args[1] != None:
+        try:
+            if args != None:
+                args = args.strip().split()
+                if 'add' in args[0]:
                     if args[1].startswith(('http://','https://')) and args[1].endswith('.gif'):
                         gif_url = args[1]
                         self.add(connection, gif_url, user_id)
                         self.__bot_controller.chat('Gif has been added :+1:')            
                     else:
-                        self.__bot_controller.chat('Usage: /charlixcx add [url]')
-                else:
-                    self.__bot_controller.chat('Incorrect link')
-        else:
-            self.__bot_controller.chat(self.get_random(connection)) 
+                        self.__bot_controller.chat('Incorrect link')
+            else:
+                self.__bot_controller.chat(self.get_random(connection)) 
+        except IndexError:
+            self.__bot_controller.chat('Usage: /charlixcx add [url]')
         connection.close()
 
     def add(self, connection: sqlite3.Connection, url: str, publisher_id: str) -> None:
