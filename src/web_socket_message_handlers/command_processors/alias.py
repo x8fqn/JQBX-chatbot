@@ -22,7 +22,7 @@ class AliasesProcessor(AbstractCommandProcessor):
         if args == []:
             self.__bot_controller.chat('Aliases: %s' % ' ,'.join(self.__command_controller.alias_get_all()))
         elif 'add' in args[0]:
-            if self.__command_controller.alias_add(args[1], args[2], user_id, self.__command_controller.command_keywords):
+            if self.__command_controller.alias_add(args[2], args[1], user_id, self.__command_controller.command_keywords):
                 self.__bot_controller.chat('Alias added')
             else: 
                 self.__bot_controller.chat('Command with this name already exists')
@@ -32,4 +32,4 @@ class AliasesProcessor(AbstractCommandProcessor):
             else: 
                 self.__bot_controller.chat('Alias not removed')
         else: 
-            self.__bot_controller.chat('Possible options: add {command} {alias} / remove {alias name}')
+            self.__bot_controller.chat('Possible options: add {command} {alias} / remove {alias}')
