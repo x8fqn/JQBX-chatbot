@@ -15,6 +15,7 @@ from src.web_socket_message_handlers.command_processors.first import FirstProces
 from src.web_socket_message_handlers.command_processors.hay import HayProcessor
 from src.web_socket_message_handlers.command_processors.top_rooms import TopRoomsProcessor
 from src.web_socket_message_handlers.command_processors.config import ConfigProcessor
+from src.web_socket_message_handlers.command_processors.alias import AliasesProcessor
 
 
 command_processors: List[AbstractCommandProcessor] = [
@@ -30,7 +31,8 @@ command_processors: List[AbstractCommandProcessor] = [
     AutoFirstProcessor(),
     HayProcessor(),
     TopRoomsProcessor(),
-    ConfigProcessor()
+    ConfigProcessor(),
+    AliasesProcessor()
     # ThemeCommandProcessor(),
     # RelinkCommandProcessor()
 ]

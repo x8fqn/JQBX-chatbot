@@ -1,4 +1,5 @@
 import os, sys
+from typing import Dict, List
 
 def get_bot_user(username: str, user_id: str, image_url: str, thumbUpImage: str = None,
 thumbDownImage: str = None, djImage: str = None) -> dict:

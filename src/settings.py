@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import List, Optional
 # from src.bot_controller import AbstractBotController, BotController
 from src.config import AbstractConfig, Config
 from src.helpers import get_bot_user 
@@ -84,7 +84,6 @@ class Settings(AbstractSettings):
         if Settings.__instance is None:
             Settings()
         return Settings.__instance
-
 
     @property
     def log_level(self) -> int:

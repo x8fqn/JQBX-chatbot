@@ -1,6 +1,7 @@
 import logging, shlex
 from html import unescape
 from typing import List, Dict, Optional, Union
+from src.command_controller import AbstractCommandController, CommandController
 from src.settings import AbstractSettings, Settings
 
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
@@ -14,12 +15,15 @@ from src.bot_controller import AbstractBotController, BotController
 class PushMessageHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  settings: AbstractSettings = Settings.get_instance(),
+                 command_controller: AbstractCommandController = CommandController.get_instance(),
                  _command_processors: List[AbstractCommandProcessor] = None):
         self.__bot_controller = bot_controller
         self.__settings = settings
+        self.__command_controller = command_controller
         self.__command_processors: Dict[str, AbstractCommandProcessor] = {
             x.keyword: x for x in _command_processors or (command_processors + [HelpCommandProcessor()])
         }
+        self.__command_controller.set_keywords([self.__command_processors[key].keyword for key in self.__command_processors.keys()])
 
     @property
     def message_label(self) -> str:
@@ -34,6 +38,8 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
 
         message_parts = message.split(' ', 1)
         keyword = message_parts[0].lower().split('/', 1)[-1]
+        alias = self.__check_alias(keyword)
+        keyword =  alias if alias else keyword
         users_payload = [] if len(message_parts) == 1 else self.__usersPayloadProcess(message_parts[1])
 
         command_processor = self.__command_processors.get(keyword)
@@ -65,3 +71,6 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
 
     def __usersPayloadProcess(self, payload: str) -> Optional[List[str]]:
         return shlex.split(payload)
+
+    def __check_alias(self, keyword) -> Optional[str]:
+        return self.__command_controller.alias_get_processor(keyword)

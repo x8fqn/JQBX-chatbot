@@ -5,7 +5,6 @@ from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.settings import AbstractSettings, Settings
 
-
 class ConfigProcessor(AbstractCommandProcessor):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
                  bot_controller: AbstractBotController = BotController.get_instance(),
@@ -56,7 +55,11 @@ class ConfigProcessor(AbstractCommandProcessor):
             self.__bot_controller.update_user()
             self.__bot_controller.chat('Changed bot username: "%s" -> "%s"' % (old_name, new_name))
         elif 'image' in args[0]:
-            if 'dj' in args[1]: 
+            if args[1].startswith(('http://', 'https://')):
+                self.__bot_controller.chat('Bot previous main image: %s' % self.__settings.user.get('image', 'None'))
+                self.__settings.set_image(0, args[1])
+                self.__bot_controller.update_user()
+            elif 'dj' in args[1]: 
                 self.__bot_controller.chat('Bot previous "DJ" image: %s' % self.__settings.user.get('djImage', 'None'))
                 self.__settings.set_image(3, args[2])
                 self.__bot_controller.update_user()
@@ -69,9 +72,9 @@ class ConfigProcessor(AbstractCommandProcessor):
                 self.__settings.set_image(2, args[2])
                 self.__bot_controller.update_user()
             else: 
-                self.__bot_controller.chat('Bot previous main image: %s' % self.__settings.user.get('image', 'None'))
-                self.__settings.set_image(0, args[1])
-                self.__bot_controller.update_user()
+                pass
+        else:
+            self.__bot_controller.chat('Possible options of bot: name / image {up/down/dj} / image {url}')
 
     def __configure_welcome(self, args: Optional[List[str]]) -> None:
         if 'on' in args[0]:
