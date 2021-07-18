@@ -51,25 +51,25 @@ class ConfigProcessor(AbstractCommandProcessor):
 
     def __configure_bot(self, args: List[Optional[str]]) -> None:
         if 'name' in args[0]:
-            new_name, old_name = ' '.join(args[1:]), self.__settings.user['username']
+            new_name, old_name = ' '.join(args[1:]), self.__settings.user.get('username', 'None')
             self.__settings.set_username(new_name)
             self.__bot_controller.update_user()
             self.__bot_controller.chat('Changed bot username: "%s" -> "%s"' % (old_name, new_name))
         elif 'image' in args[0]:
             if 'dj' in args[1]: 
-                self.__bot_controller.chat('Bot previous "DJ" image: %s' % self.__settings.user['djImage'])
+                self.__bot_controller.chat('Bot previous "DJ" image: %s' % self.__settings.user.get('djImage', 'None'))
                 self.__settings.set_image(3, args[2])
                 self.__bot_controller.update_user()
             elif ('up' or 'thumbUp') in args[1]:
-                self.__bot_controller.chat('Bot previous "thumbUp" image: %s' % self.__settings.user['thumbsUpImage'])
+                self.__bot_controller.chat('Bot previous "thumbUp" image: %s' % self.__settings.user.get('thumbsUpImage', 'None'))
                 self.__settings.set_image(1, args[2])
                 self.__bot_controller.update_user()
             elif ('down' or 'thumbDown') in args[1]:
-                self.__bot_controller.chat('Bot previous "thumbDown" image: %s' % self.__settings.user['thumbsDownImage'])
+                self.__bot_controller.chat('Bot previous "thumbDown" image: %s' % self.__settings.user.get('thumbsDownImage', 'None'))
                 self.__settings.set_image(2, args[2])
                 self.__bot_controller.update_user()
             else: 
-                self.__bot_controller.chat('Bot previous main image: %s' % self.__settings.user['image'])
+                self.__bot_controller.chat('Bot previous main image: %s' % self.__settings.user.get('image', 'None'))
                 self.__settings.set_image(0, args[1])
                 self.__bot_controller.update_user()
 
