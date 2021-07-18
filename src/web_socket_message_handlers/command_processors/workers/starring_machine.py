@@ -16,9 +16,12 @@ class StarringMachine:
     def vote(self, user_id: str, success_action: Callable[[AbstractBotController], None]) -> None:
         if not self.__room_state.current_track:
             return False
-        if self.__room_state.djs[0]['id'] == user_id:
-            self.__bot_controller.chat('You can\'t vote for yourself')
-            return False
+        try:
+            if self.__room_state.djs[0]['id'] == user_id:
+                self.__bot_controller.chat('You can\'t vote for yourself')
+                return False
+        except IndexError:
+                pass
         if self.__bot_controller.starred:
             self.__bot_controller.chat('I\'m already starred this')
             return False
