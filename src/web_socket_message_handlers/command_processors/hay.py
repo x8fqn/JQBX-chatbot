@@ -26,13 +26,13 @@ class HayProcessor(AbstractCommandProcessor):
         '''
 
     def process(self, user_id: str, args: Optional[List[str]]) -> None:
-        room_input = args[0]
-        message = ' '.join(args[1:])
-        room_id_request = json.loads(requests.get('https://jqbx.fm/rooms/search/title/%s/0' % room_input).text)
-        user_id_request = json.loads(requests.get('https://jqbx.fm/user/spotify:user:%s' % user_id).text)
-        
-        message_username = '%s (%s)' % (user_id_request['username'], self.__room_state.room_title)
         try:
+            room_input = args[0]
+            message = ' '.join(args[1:])
+            user_id_request = json.loads(requests.get('https://jqbx.fm/user/spotify:user:%s' % user_id).text)
+            message_username = '%s (%s)' % (user_id_request['username'], self.__room_state.room_title)
+            room_id_request = json.loads(requests.get('https://jqbx.fm/rooms/search/title/%s/0' % room_input).text)
+
             if room_id_request['total'] == 1:
                 self.__bot_controller.interroom_chat(room_id_request['rooms'][0]['_id'], message_username, message)
                 self.__bot_controller.chat(':email::white_check_mark: Sent to a room called "%s" with %s users' % (

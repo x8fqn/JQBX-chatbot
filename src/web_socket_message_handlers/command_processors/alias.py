@@ -19,7 +19,7 @@ class AliasesProcessor(AbstractCommandProcessor):
         return 'Alias management'
 
     def process(self, user_id: str, args: Optional[List[str]]) -> None:
-        if args == []:
+        if args == None:
             self.__bot_controller.chat('Aliases: %s' % ' ,'.join(self.__command_controller.alias_get_all()))
         elif 'add' in args[0]:
             if self.__command_controller.alias_add(args[2], args[1], user_id, self.__command_controller.command_keywords):

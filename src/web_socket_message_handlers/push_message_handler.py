@@ -1,4 +1,4 @@
-import logging, shlex
+import logging, shlex, string
 from html import unescape
 from typing import List, Dict, Optional, Union
 from src.command_controller import AbstractCommandController, CommandController
@@ -31,7 +31,7 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
 
     def handle(self, message: WebSocketMessage) -> None:
         payload = message.payload
-        message = unescape(payload['message'].strip())
+        message = self.__message_filter(payload['message'])
         user_id = self.__getUserID(payload)
         if not self.__isValidUser(user_id): return
         if not self.__isValidMessage(message): return
@@ -40,14 +40,14 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         keyword = message_parts[0].lower().split('/', 1)[-1]
         alias = self.__check_alias(keyword)
         keyword =  alias if alias else keyword
-        users_payload = [] if len(message_parts) == 1 else self.__usersPayloadProcess(message_parts[1])
+        users_payload = None if len(message_parts) == 1 else self.__usersPayloadProcess(message_parts[1])
 
         command_processor = self.__command_processors.get(keyword)
         logging.info('%s called by %s' % (repr(message_parts), (self.__getUsername(payload) or user_id)))
         if command_processor:
             try:
                 command_processor.process(user_id, users_payload)
-            except IndexError:
+            except (IndexError, TypeError):
                 self.__bot_controller.chat('Unable to process input data. Please, specify the request')
             except Exception as e:
                 logging.error(e)
@@ -68,6 +68,11 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         if not (message.startswith('/') and len(message) > 1):
             return False
         else: return True
+
+    def __message_filter(self, msg: str):
+        result = unescape(msg.strip())
+        result = ''.join([x for x in result if x in string.printable])
+        return result
 
     def __usersPayloadProcess(self, payload: str) -> Optional[List[str]]:
         return shlex.split(payload)

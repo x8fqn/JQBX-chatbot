@@ -42,7 +42,7 @@ class ConfigProcessor(AbstractCommandProcessor):
         else: return True
 
     def __noArguments(self, payload) -> bool:
-        if payload == []:
+        if payload == None:
             self.__bot_controller.chat('Possible options: bot / welcome')
             return True
         else: 

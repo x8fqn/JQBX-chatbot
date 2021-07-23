@@ -20,13 +20,14 @@ class HelpCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'This'
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
-        if 'verbose' in args:
+    def process(self, user_id: str, args: Optional[List[str]]) -> None: 
+        if not args:
+            self.__bot_controller.chat(
+                ', '.join([self.__commands[key].keyword for key in sorted(self.__commands.keys())]))
+        elif 'verbose' in args:
             self.__bot_controller.chat(
                 ['/%s - %s' % (self.__commands[key].keyword, self.__commands[key].help) for key in sorted(self.__commands.keys())])
         elif (len(args) > 0) and (args[0] in [self.__commands[key].keyword for key in self.__commands.keys()]):
             self.__bot_controller.chat('/%s - %s' % (self.__commands[args[0]].keyword, self.__commands[args[0]].help))
-        else:
-            self.__bot_controller.chat(
-                ', '.join([self.__commands[key].keyword for key in sorted(self.__commands.keys())]))
+            
 
