@@ -142,12 +142,12 @@ class RoomState(AbstractRoomState):
 
     def set_current_track(self, current_track: dict) -> None:
         self.__current_track = current_track
+        self.__max_user_count = len(self.users)
         self.__track_history.add_track(self.__current_track['name'],
             ", ".join([i['name'] for i in self.__current_track['artists']]),
             self.__current_track['uri'], parser.parse(self.__current_track['startedAt']).timestamp(),
-            self.__current_track['userUri'])
+            self.__current_track['userUri'], self.__max_user_count)
         self.__bot_controller.reset_vote()
-        self.__max_user_count = len(self.users)
 
     def set_room_title(self, room_title: str) -> None:
         if self.__room_title != room_title:

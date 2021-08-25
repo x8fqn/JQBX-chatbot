@@ -25,8 +25,8 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
         self.__update_mod_ids(payload)
         self.__update_users(payload)
         self.__update_room_title(payload)
-        self.__initial_track_update(payload)
         self.__update_votes(payload)
+        self.__initial_track_update(payload)
 
     def __update_mod_ids(self, payload: dict) -> None:
         admins = payload.get('admin', [])

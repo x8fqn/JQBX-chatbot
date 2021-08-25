@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
 class AbstractCommandProcessor(ABC):
@@ -14,5 +16,5 @@ class AbstractCommandProcessor(ABC):
         pass
 
     @abstractmethod
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
         pass

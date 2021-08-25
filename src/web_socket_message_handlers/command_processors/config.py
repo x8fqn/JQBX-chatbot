@@ -4,6 +4,9 @@ from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.settings import AbstractSettings, Settings
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
+
 
 class ConfigProcessor(AbstractCommandProcessor):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
@@ -23,14 +26,14 @@ class ConfigProcessor(AbstractCommandProcessor):
             Bot's components configurator
         '''
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
-        if not self.__isAdmin(user_id): return
-        if self.__noArguments(args): return
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
+        if not self.__isAdmin(pushMessage.user.id): return
+        if self.__noArguments(userInput.arguments): return
 
-        if 'bot' in args[0]:
-            self.__configure_bot(args[1:])
-        elif 'welcome' in args[0]:
-            self.__configure_welcome(args[1:])
+        if userInput.args_check('bot', 0):
+            self.__configure_bot(userInput.arguments[1:])
+        elif userInput.args_check('welcome', 0):
+            self.__configure_welcome(userInput.arguments[1:])
         else:
             self.__bot_controller.chat('Сomponent is not available for configuration')
 

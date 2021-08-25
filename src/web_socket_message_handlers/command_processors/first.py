@@ -7,6 +7,9 @@ from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.settings import AbstractSettings, Settings
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
+
 
 class FirstProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
@@ -26,7 +29,7 @@ class FirstProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Get info about the first play of the current track on JQBX'
 
-    def process(self, user_id: str, payload: Optional[List[str]]) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
         jqbx_first_request = self.__api.firsts(self.__room_state.current_track['uri'])
         firstDB = {
             'track_name': str(jqbx_first_request['track']['name']),
@@ -50,7 +53,7 @@ class FirstProcessor(AbstractCommandProcessor):
                 firstDB['thumbsDown'],
                 's' if int(firstDB['thumbsDown']) % 10 != 1 else '')]
 
-        if (user_id == str(jqbx_first_request['user']['uri']).replace('spotify:user:','')):
+        if (pushMessage.user.id == str(jqbx_first_request['user']['uri']).replace('spotify:user:','')):
             if jqbx_first_request['room']['_id'] == self.__settings.room_id:
                 msg.insert(0, ':cake:')
             else:
@@ -71,7 +74,7 @@ class AutoFirstProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Switch "first" on every tune'
 
-    def process(self, user_id: str, args: Optional[str]) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
         if self.__settings.autofirst_isEnabled:
             self.__settings.autofirst_set_enable(False)
             return self.__bot_controller.chat('Auto-first deactivated')

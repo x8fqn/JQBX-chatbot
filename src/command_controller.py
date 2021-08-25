@@ -1,42 +1,40 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import List, Dict, Optional, Union
+from src.bot_controller import AbstractBotController, BotController
+from src.db_controllers.custom_commands import Single, Alias, CustomCommandsDB, AbstractCustomCommandsDB
 
-from src.db_controllers.aliases import AbstractAliasesDB, AliasesDB
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 class AbstractCommandController(ABC):
     @abstractmethod
-    def alias_get_all(self) -> Optional[List]:
+    def create_single(self, name: str, message: str, publisher_id: str = None, description: str = None) -> bool:
         pass
 
     @abstractmethod
-    def alias_add(self, alias: str, processor: str, user_id: str, processors: List[str]) -> bool:
+    def create_alias(self, name: str, alias: str, publisher_id: str = None, description: str = None) -> bool:
         pass
 
     @abstractmethod
-    def alias_get_processor(self, keyword: str) -> Optional[str]:
+    def get_command(self, name: str) -> Optional[Union[Alias, Single]]:
         pass
 
     @abstractmethod
-    def alias_remove(self, alias: str) -> bool:
-        pass
-
-    @property
-    @abstractmethod
-    def command_keywords(self) -> List[str]:
+    def remove_command(self, command: Union[Single, Alias]) -> bool:
         pass
 
     @abstractmethod
-    def set_keywords(self, keywords: List[str]) -> None:
-        pass 
+    def command_list(self) -> Optional[List[str]]:
+        pass
 
 
 class CommandController(AbstractCommandController):
     __instance: Optional['CommandController'] = None
 
-    def __init__(self, alias: AbstractAliasesDB = AliasesDB()) -> None:
-        self.__command_keywords: Optional[List[str]] = None
-        self.__alias = alias
-
+    def __init__(self, custom_commands: AbstractCustomCommandsDB = CustomCommandsDB(),
+    bot_controller: AbstractBotController = BotController.get_instance()) -> None:
+        self.__commands = custom_commands
+        self.__bot_controller = bot_controller
         CommandController.__instance = self
     
     def get_instance() -> 'CommandController':
@@ -44,21 +42,32 @@ class CommandController(AbstractCommandController):
             CommandController()
         return CommandController.__instance
 
-    def set_keywords(self, keywords: List[str]) -> None:
-        self.__command_keywords = keywords
+    def command_list(self) -> Optional[List[str]]:
+        return self.__commands.get_all_command_names()
 
-    @property
-    def command_keywords(self) -> List[str]:
-        return self.__command_keywords
+    def create_single(self, name: str, message: str, publisher_id: str = None, description: str = None) -> bool:
+        # if name in self.command_keywords:
+        # if name in self.__preprocessor._command_processors().keys():
+        #     return False
+        # else:
+        return self.__commands.create_single(name, message, publisher_id, description)
 
-    def alias_add(self, alias: str, processor: str, user_id: str, commands: List[str]) -> bool:
-        return self.__alias.add(processor, alias, user_id, commands)
+    def create_alias(self, name: str, alias: str, publisher_id: str = None, description: str = None) -> bool:
+        # if name in self.command_keywords:
+        # if name in self.__command_processors.keys():
+        #     return False
+        # else:
+        return self.__commands.create_alias(name, alias, publisher_id, description)
 
-    def alias_get_processor(self, keyword: str) -> Optional[str]:
-        return self.__alias.get_processor(keyword)
-    
-    def alias_get_all(self) -> Optional[List]:
-        return self.__alias.get_all()
+    def get_command(self, name: str) -> Optional[Union[Alias, Single]]:
+        command = self.__commands.get_command(name)
+        # if isinstance(command, Alias):
+        #     with self.__commands.get_command(command.keyword) as recheck:
+        #         if recheck: 
+        #             command = recheck
+        return command
 
-    def alias_remove(self, alias: str) -> bool:
-        return self.__alias.remove(alias)
+    def remove_command(self, command: Union[Single, Alias]) -> bool:
+        return self.__commands.remove_command(command)
+
+  

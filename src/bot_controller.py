@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
+from copy import copy
 
 from src.settings import AbstractSettings, Settings
 from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
@@ -15,6 +16,10 @@ class AbstractBotController(ABC):
     def chat(self, message: Union[str, List[str]]) -> None:
         pass
     
+    @abstractmethod
+    def info_chat(self, message: Union[str, List[str]]) -> None:
+        pass
+
     @abstractmethod
     def interroom_chat(self, room_id: str, username: str, message: str) -> None:
         pass
@@ -88,20 +93,33 @@ class BotController(AbstractBotController):
             'roomId': self.__settings.room_id,
             'user': self.__settings.user,
             'message': {
-                'message': ' <br/> '.join(lines),
+                'message': '</br>\n'.join(lines),
                 'user': self.__settings.user,
                 'selectingEmoji': False
             }
         }
         self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
 
-    def interroom_chat(self, room_id: str, username: str, message: str) -> None:
+    def info_chat(self, message: Union[str, List[str]]) -> None:
+        lines = message if isinstance(message, list) else [message]
+        payload = {
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user,
+            'message': {
+                'message': '</br>\n'.join(lines),
+                'selectingEmoji': False
+            }
+        }
+        self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
+
+    def interroom_chat(self, room_id: str, username: str, message: Union[str, List[str]]) -> None:
+        lines = message if isinstance(message, list) else [message]
         payload = {
             'roomId': room_id,
             'user': self.__settings.user,
             'message': {
-                'message': message,
-                'user': self.__settings.user,
+                'message': '</br>\n'.join(lines),
+                'user': copy(self.__settings.user),
                 'selectingEmoji': False
             }
         }

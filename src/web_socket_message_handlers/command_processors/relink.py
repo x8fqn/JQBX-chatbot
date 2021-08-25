@@ -4,6 +4,8 @@ from src.bot_controller import AbstractBotController, BotController
 from src.data_service import AbstractDataService, DataService
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
 class RelinkCommandProcessor(AbstractCommandProcessor):
@@ -24,7 +26,7 @@ class RelinkCommandProcessor(AbstractCommandProcessor):
             If a song is not available to your country, find links to international versions.
         '''
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
         countries: List[str] = list(set([x['country'] for x in self.__room_state.users]))
         international_versions = self.__data_service.relink(self.__room_state.current_track['id'], countries)
         if not international_versions:

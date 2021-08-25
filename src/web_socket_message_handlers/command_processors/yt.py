@@ -3,6 +3,8 @@ from src.modules.youtube import Youtube
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
 class YtCommandProcessor(AbstractCommandProcessor):
@@ -21,7 +23,7 @@ class YtCommandProcessor(AbstractCommandProcessor):
             Find the link to this tune on YouTube
         '''
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
         result = Youtube.searchTune(self.__room_state.current_track['name'], 
             [artist['name'] for artist in self.__room_state.current_track['artists']],
             self.__room_state.current_track['duration_ms'] // 1000)

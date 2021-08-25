@@ -3,6 +3,8 @@ from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
 class ChooseCommandProcessor(AbstractCommandProcessor):
@@ -15,10 +17,9 @@ class ChooseCommandProcessor(AbstractCommandProcessor):
 
     @property
     def help(self) -> str:
-        return 'Pick something randomly from a comma-separated list of choices'
+        return 'Pick something randomly from a list of choices'
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
-        if not args:
-            self.__bot_controller.chat('Please give me a comma-separate list of choices')
-            return
-        self.__bot_controller.chat(random.choice(args.split(',')).strip())
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
+        if not userInput.arguments:
+            return self.__bot_controller.chat('Please give me a comma-separate list of choices')
+        self.__bot_controller.chat(random.choice(userInput.arguments).strip())

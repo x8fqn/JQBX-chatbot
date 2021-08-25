@@ -7,6 +7,8 @@ from requests.models import Response
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
 class HayProcessor(AbstractCommandProcessor):
@@ -25,12 +27,11 @@ class HayProcessor(AbstractCommandProcessor):
             Interroom messaging. Using: /hay [roomHandle or roomID] [message]
         '''
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
-        try:
-            room_input = args[0]
-            message = ' '.join(args[1:])
-            user_id_request = json.loads(requests.get('https://jqbx.fm/user/spotify:user:%s' % user_id).text)
-            message_username = '%s (%s)' % (user_id_request['username'], self.__room_state.room_title)
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
+        room_input = userInput.args_get(0)
+        message = userInput.args_getRange(1)
+        if room_input and message:
+            message_username = '%s (%s)' % (pushMessage.user.username, self.__room_state.room_title)
             room_id_request = json.loads(requests.get('https://jqbx.fm/rooms/search/title/%s/0' % room_input).text)
 
             if room_id_request['total'] == 1:
@@ -45,5 +46,5 @@ class HayProcessor(AbstractCommandProcessor):
                     self.__bot_controller.chat(':email::id: Sending by room ID')
                 else:
                     self.__bot_controller.chat(':email::id::x: Room ID is invalid')
-        except IndexError:
+        else:
             self.__bot_controller.chat(':email::x: Not enough arguments')

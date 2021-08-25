@@ -1,11 +1,12 @@
-import random, sqlite3, os, sys
+import sqlite3, os
 from src.helpers import get_config_path
 from sqlite3 import connect
 from datetime import datetime
-from typing import Optional, List
 
 from src.bot_controller import AbstractBotController, BotController
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.web_socket_message_handlers.objects.user_input import UserInput
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
 class CharlixcxCommandProcessor(AbstractCommandProcessor):
@@ -20,7 +21,7 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Bring me the pictures of Charli XCX immediately!'
 
-    def process(self, user_id: str, args: Optional[List[str]]) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
         path = os.path.join(get_config_path(), 'gifs.sqlite')
         connection = connect(path)
         connection.execute('''
@@ -30,19 +31,16 @@ class CharlixcxCommandProcessor(AbstractCommandProcessor):
                 publisher_id TEXT,
                 url TEXT
         )''')
-        try:
-            if args != None:
-                if 'add' in args[0]:
-                    if args[1].startswith(('http://','https://')) and args[1].endswith('.gif'):
-                        gif_url = args[1]
-                        self.add(connection, gif_url, user_id)
-                        self.__bot_controller.chat('Gif has been added :+1:')            
-                    else:
-                        self.__bot_controller.chat('Incorrect link')
-            else:
-                self.__bot_controller.chat(self.get_random(connection)) 
-        except IndexError:
-            self.__bot_controller.chat('Usage: /charlixcx add [url]')
+        if userInput.arguments:
+            if userInput.args_check('add', 0):
+                if userInput.args_get(1).startswith(('http://','https://')) and userInput.args_get(1).endswith('.gif'):
+                    gif_url = userInput.args_get(1)
+                    self.add(connection, gif_url, pushMessage.user.uri)
+                    self.__bot_controller.chat('Gif has been added :+1:')            
+                else:
+                    self.__bot_controller.chat('Incorrect link')
+        else:
+            self.__bot_controller.chat(self.get_random(connection)) 
         connection.close()
 
     def add(self, connection: sqlite3.Connection, url: str, publisher_id: str) -> None:
