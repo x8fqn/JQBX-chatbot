@@ -25,10 +25,10 @@ class AliasesProcessor(AbstractCommandProcessor):
             name, keyword = userInput.args_get(0), userInput.args_get(1)
             description = userInput.args_get(2)
             if keyword and name:
-                if self.__command_controller.create_alias(keyword, name, pushMessage.user.id, description):
-                    self.__bot_controller.chat('Done!')
+                if self.__command_controller.create_alias(name, keyword, pushMessage.user.id, description):
+                    self.__bot_controller.info_chat('Done!')
                 else:
-                    self.__bot_controller.chat('Failed!')
+                    self.__bot_controller.info_chat('Failed!')
             else:
                 self.__bot_controller.chat(help_msg)
         else:

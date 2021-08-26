@@ -30,9 +30,9 @@ class CommandHandler:
     def __preprocess(self, pushMessage: PushMessage, userInput: UserInput, command: Union[Single, Alias]):
         if userInput.args_check('remove', 0):
             if self.__command_controller.remove_command(command):
-                self.__bot_controller.chat('Done!')
+                self.__bot_controller.info_chat('Done!')
             else:
-                self.__bot_controller.chat('Failed!')
+                self.__bot_controller.info_chat('Failed!')
         elif userInput.args_check('info', 0):
             pass
         else: 

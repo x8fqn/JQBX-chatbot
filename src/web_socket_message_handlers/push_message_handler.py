@@ -22,7 +22,6 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         self.__settings = settings
         self.__command_controller = command_controller
         self.__command_handler = command_handler
-        # self.__command_controller.set_keywords([self.__command_processors[key].keyword for key in self.__command_processors.keys()])
 
     @property
     def message_label(self) -> str:
@@ -43,7 +42,7 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         isUserValid = True
         isMessageValid = True
         # User validation
-        if pushMessage.user.uri is None or pushMessage.user.uri == self.__settings.user_id: 
+        if pushMessage.user is None or pushMessage.user.id == self.__settings.user_id: 
             isUserValid = False
         else: 
             isUserValid = True
@@ -53,32 +52,4 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
         else: 
             isMessageValid = True
         return isUserValid and isMessageValid
-
-    # def __preprocess(self, command_processors: Dict[str, AbstractCommandProcessor], keyword, user_id, users_payload, command: Command = None) -> None:
-    #     if command:
-    #         if users_payload:
-    #             if users_payload[0] == ('remove' or 'delete'):
-    #                 if self.__command_controller.remove_command(command.command_id):
-    #                     self.__bot_controller.chat('%s has been removed!' % command.name)
-    #                 else:
-    #                     self.__bot_controller.chat('%s is built-in or failed to remove' % command.name)
-    #         else:
-    #             if isinstance(command, Alias):
-    #                 self.__process(command_processors, keyword, user_id, users_payload)
-    #             elif isinstance(command, Single):
-    #                 self.__bot_controller.chat(command.message)
-    #     else:
-    #         self.__process(command_processors, keyword, user_id, users_payload)
-
-    # def __process(self, command_processors: Dict[str, AbstractCommandProcessor], keyword, user_id, users_payload) -> None:
-    #     command_processor = command_processors.get(keyword)
-    #     if command_processor:
-    #             try:
-    #                 command_processor.process(user_id, users_payload)
-    #             except (IndexError, TypeError) as e:
-    #                 logging.error(e)
-    #                 self.__bot_controller.chat('Unable to process input data. Please, specify the request')
-    #             except Exception as e:
-    #                 logging.error(e)
-    #                 self.__bot_controller.chat('An error occurred while processing the command')
         
