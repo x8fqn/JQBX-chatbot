@@ -14,10 +14,12 @@ from src.web_socket_message_handlers.command_processors.top_rooms import TopRoom
 from src.web_socket_message_handlers.command_processors.config import ConfigProcessor
 from src.web_socket_message_handlers.command_processors.alias import AliasesProcessor
 from src.web_socket_message_handlers.command_processors.single import SingleProcessor
+from src.web_socket_message_handlers.command_processors.tv import TvCommandProcessor
 
 class Processors:
     __command_processors: List[AbstractCommandProcessor] = [
         DadjokeCommandProcessor(),
+        TvCommandProcessor(),
         RockOutCommandProcessor(),
         UrbanCommandProcessor(),
         ChooseCommandProcessor(),
