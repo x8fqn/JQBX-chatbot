@@ -15,6 +15,7 @@ from src.web_socket_message_handlers.command_processors.config import ConfigProc
 from src.web_socket_message_handlers.command_processors.alias import AliasesProcessor
 from src.web_socket_message_handlers.command_processors.single import SingleProcessor
 from src.web_socket_message_handlers.command_processors.tv import TvCommandProcessor
+from src.web_socket_message_handlers.command_processors.command import CommandCommandProcessor
 
 class Processors:
     __command_processors: List[AbstractCommandProcessor] = [
@@ -32,7 +33,8 @@ class Processors:
         TopRoomsProcessor(),
         ConfigProcessor(),
         AliasesProcessor(),
-        SingleProcessor()
+        SingleProcessor(),
+        CommandCommandProcessor()
     ]
     
     def __init__(self) -> None:
