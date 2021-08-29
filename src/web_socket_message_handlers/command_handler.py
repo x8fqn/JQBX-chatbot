@@ -7,6 +7,8 @@ from src.web_socket_message_handlers.command_processors.command_processors impor
 from src.web_socket_message_handlers.objects.push_message import PushMessage
 from src.web_socket_message_handlers.objects.user_input import UserInput
 from src.web_socket_message_handlers.command_processors.help import HelpCommandProcessor
+from datetime import datetime
+from src.jqbx_api import JQBXAPI
 
 
 class CommandHandler:
@@ -34,7 +36,14 @@ class CommandHandler:
             else:
                 self.__bot_controller.info_chat('Failed!')
         elif userInput.args_check('info', 0):
-            pass
+            msg = []
+            types = ['Single', 'Collection', 'Alias', 'Action']
+            msg.append('Name - %s, ID - %s, Type - %s' % (command.name, str(command.command_id), types[command.type]))
+            msg.append('Added by %s at %s' % (
+                JQBXAPI.user('spotify:user:' + command.publisher_id).primaryUsername(),
+                datetime.fromtimestamp(command.added_timestamp).strftime('%H:%M:%S %m/%d/%Y')
+            ))
+            self.__bot_controller.chat(msg)
         else: 
             self.__command_process(command, pushMessage, userInput)
 
@@ -45,10 +54,9 @@ class CommandHandler:
             self.__alias_process(command, pushMessage, userInput)
         
     def __alias_process(self, command: Alias, pushMessage: PushMessage, userInput: UserInput):
-        processors = Processors()
-        if command.keyword in processors.command_processors:
-            processors.get(command.keyword).process(pushMessage, userInput)
+        if command.keyword in self.__processors.command_processors:
+            self.__processors.get(command.keyword).process(pushMessage, userInput)
         else:
-            with self.__command_controller.get_command(command.keyword) as command:
-                if command:
-                    self.__command_process(command, pushMessage, userInput)   
+            command = self.__command_controller.get_command(command.keyword)
+            if command:
+                self.__command_process(command, pushMessage, userInput)   

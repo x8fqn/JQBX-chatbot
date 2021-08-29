@@ -11,8 +11,6 @@ from src.web_socket_message_handlers.abstract_web_socket_message_handler import 
 from src.bot_controller import AbstractBotController, BotController
 
 
-
-
 class PushMessageHandler(AbstractWebSocketMessageHandler):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
     settings: AbstractSettings = Settings.get_instance(), 

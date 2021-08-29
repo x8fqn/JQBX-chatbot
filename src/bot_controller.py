@@ -93,7 +93,7 @@ class BotController(AbstractBotController):
             'roomId': self.__settings.room_id,
             'user': self.__settings.user,
             'message': {
-                'message': '</br>\n'.join(lines),
+                'message': ' </br>\n'.join(lines),
                 'user': self.__settings.user,
                 'selectingEmoji': False
             }
@@ -106,7 +106,7 @@ class BotController(AbstractBotController):
             'roomId': self.__settings.room_id,
             'user': self.__settings.user,
             'message': {
-                'message': '</br>\n'.join(lines),
+                'message': ' </br>\n'.join(lines),
                 'selectingEmoji': False
             }
         }
@@ -118,7 +118,7 @@ class BotController(AbstractBotController):
             'roomId': room_id,
             'user': self.__settings.user,
             'message': {
-                'message': '</br>\n'.join(lines),
+                'message': ' </br>\n'.join(lines),
                 'user': copy(self.__settings.user),
                 'selectingEmoji': False
             }

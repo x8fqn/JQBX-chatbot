@@ -46,26 +46,13 @@ class CommandController(AbstractCommandController):
         return self.__commands.get_all_command_names()
 
     def create_single(self, name: str, message: str, publisher_id: str = None, description: str = None) -> bool:
-        # if name in self.command_keywords:
-        # if name in self.__preprocessor._command_processors().keys():
-        #     return False
-        # else:
         return self.__commands.create_single(name, message, publisher_id, description)
 
     def create_alias(self, name: str, alias: str, publisher_id: str = None, description: str = None) -> bool:
-        # if name in self.command_keywords:
-        # if name in self.__command_processors.keys():
-        #     return False
-        # else:
         return self.__commands.create_alias(name, alias, publisher_id, description)
 
     def get_command(self, name: str) -> Optional[Union[Alias, Single]]:
-        command = self.__commands.get_command(name)
-        # if isinstance(command, Alias):
-        #     with self.__commands.get_command(command.keyword) as recheck:
-        #         if recheck: 
-        #             command = recheck
-        return command
+        return self.__commands.get_command(name)
 
     def remove_command(self, command: Union[Single, Alias]) -> bool:
         return self.__commands.remove_command(command)

@@ -53,7 +53,7 @@ class FirstProcessor(AbstractCommandProcessor):
                 firstDB['thumbsDown'],
                 's' if int(firstDB['thumbsDown']) % 10 != 1 else '')]
 
-        if (pushMessage.user.id == str(jqbx_first_request['user']['uri']).replace('spotify:user:','')):
+        if (self.__room_state.users[0]['uri'] == jqbx_first_request['user']['uri']):
             if jqbx_first_request['room']['_id'] == self.__settings.room_id:
                 msg.insert(0, ':cake:')
             else:

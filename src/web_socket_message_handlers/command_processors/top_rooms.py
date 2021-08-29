@@ -1,7 +1,4 @@
 from typing import Optional, List
-
-from time import sleep
-
 from src.bot_controller import AbstractBotController, BotController
 from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
@@ -36,10 +33,8 @@ class TopRoomsProcessor(AbstractCommandProcessor):
 
     def __args_processor(self, args: Optional[List[str]], messages: Optional[List[str]]):
         if args: 
-            if 'list' in args:
-                for item in messages:
-                    self.__bot_controller.chat(item)
-                    sleep(0.1)
+            if 'nobr' in args:
+                self.__bot_controller.chat('\n'.join(messages))
             else:
                 self.__bot_controller.chat(messages)
         else: 

@@ -26,9 +26,9 @@ class SingleProcessor(AbstractCommandProcessor):
             description = userInput.args_get(2)
             if message and name:
                 if self.__command_controller.create_single(name, message, pushMessage.user.id, description):
-                    self.__bot_controller.chat('Done!')
+                    self.__bot_controller.info_chat('Done!')
                 else:
-                    self.__bot_controller.chat('Failed!')
+                    self.__bot_controller.info_chat('Failed!')
             else:
                 self.__bot_controller.chat(help_msg)
         else:
