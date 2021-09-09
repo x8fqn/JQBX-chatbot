@@ -11,7 +11,7 @@ from src.web_socket_message_handlers.objects.user_input import UserInput
 from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 
-class FirstProcessor(AbstractCommandProcessor):
+class FirstCommandProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
                  room_state: AbstractRoomState = RoomState.get_instance(),
                  settings: AbstractSettings = Settings.get_instance(),
@@ -60,7 +60,7 @@ class FirstProcessor(AbstractCommandProcessor):
                 msg.insert(0, ':cookie:')
         self.__bot_controller.chat(' '.join(msg))
 
-class AutoFirstProcessor(AbstractCommandProcessor):
+class AutoFirstCommandProcessor(AbstractCommandProcessor):
     def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
     settings: AbstractSettings = Settings.get_instance()):
         self.__settings = settings

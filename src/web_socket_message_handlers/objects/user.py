@@ -4,68 +4,56 @@ __all__ = ['User']
 
 class User:
     def __init__(self, user: Dict[str, Dict]) -> None:
-        self.__username = user.get('username', None)
-        self.__display_name = user.get('display_name')
-        self.__id = user.get('id', None)
-        self.__uri = user.get('uri', None)
-        self.__device = user.get('device', None) # bot, mobile, desktop
-        self.__status = user.get('status', None) # active, inactive
-        self.__country = user.get('country', None) # UK, US, BY ...
-        self.__image = user.get('image', None)
-        self.__thumbsUpImage = user.get('thumbsUpImage', None)
-        self.__thumbsDownImage = user.get('thumbsDownImage', None)
-        self.__djImage = user.get('djImage', None)
-        self.__statusChangedAt = user.get('statusChangedAt', None)
-        self.___id = user.get('_id', None)
+        self.__user_obj = user
 
     @property
     def username(self) -> str:
-        return self.__username
+        return self.__user_obj.get('username', None)
 
     @property
     def display_name(self) -> str:
-        return self.__display_name
+        return self.__user_obj.get('display_name')
 
     @property
     def id(self) -> str:
-        return self.__id
+        return self.__user_obj.get('id', None)
 
     @property
     def uri(self) -> str:
-        return self.__uri
+        return self.__user_obj.get('uri', None)
 
     @property
     def device(self) -> str:
-        return self.__device
+        return self.__user_obj.get('device', None)
 
     @property
     def status(self) -> str:
-        return self.__status
+        return self.__user_obj.get('status', None)
 
     @property
     def country(self) -> str:
-        return self.__country
+        return self.__user_obj.get('country', None)
 
     @property
     def image(self) -> Optional[str]:
-        return self.__image
+        return self.__user_obj.get('image', None)
 
     @property
     def thumbsUpImage(self) -> Optional[str]:
-        return self.__thumbsUpImage
+        return self.__user_obj.get('thumbsUpImage', None)
 
     @property
     def thumbsDownImage(self) -> Optional[str]:
-        return self.__thumbsDownImage
+        return self.__user_obj.get('thumbsUpImage', None)
 
     @property
     def djImage(self) -> Optional[str]:
-        return self.__djImage
+        return self.__user_obj.get('djImage', None)
 
     @property
     def statusChangedAt(self) -> Optional[str]:
-        return self.__statusChangedAt
+        return self.__user_obj.get('statusChangedAt', None)
 
     @property
     def _id(self) -> Optional[str]:
-        return self.___id
+        return self.__user_obj.get('_id', None)

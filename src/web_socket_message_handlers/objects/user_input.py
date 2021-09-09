@@ -20,7 +20,7 @@ class UserInput:
         return self.__args
 
     @property
-    def text(self) -> None:
+    def text(self) -> Optional[str]:
         if len(self.__parts) == 2:
             return self.__parts[1]
     

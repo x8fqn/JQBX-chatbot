@@ -3,11 +3,11 @@ from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
 from src.settings import AbstractSettings, Settings
-from src.web_socket_message_handlers.command_processors.first import FirstProcessor, AbstractCommandProcessor
+from src.web_socket_message_handlers.command_processors.first import FirstCommandProcessor, AbstractCommandProcessor
 
 class PlayTrackHandler(AbstractWebSocketMessageHandler):
     def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
-                first_processor: AbstractCommandProcessor = FirstProcessor(),
+                first_processor: AbstractCommandProcessor = FirstCommandProcessor(),
                 settings: AbstractSettings = Settings.get_instance()):
         self.__room_state = room_state
         self.__settings = settings

@@ -20,26 +20,26 @@ class PushMessage:
     @property
     def user(self) -> Optional[User]:
         '''`User` object or `None`'''
-        return self.__user
+        return User(self.__payload.get('user')) if self.__payload.get('user') else None
 
     @property
     def recipients(self) -> Optional[List[User]]:
         '''List of `User` objects or `None`'''
-        return self.__recipients
+        return [User(user) for user in self.__payload.get('recipients')] if self.__payload.get('recipients') else None
 
     @property
     def message(self) -> str:
-        return self.__message
+        return self.__payload.get('message', None)
 
     @property
     def type(self) -> Optional[str]:
-        return self.__type
+        return self.__payload.get('type', None)
     
     @property
     def selectingEmoji(self) -> Optional[bool]:
-        return self.__selectingEmoji
+        return self.__payload.get('selectingEmoji', None)
     
     @property
     def _id(self) -> Optional[str]:
-        return self.___id
+        return self.__payload.get('_id', None)
 
