@@ -1,15 +1,19 @@
 import string, re
 from html import unescape
-from typing import Any, List, Optional, Tuple, Union, overload
+from typing import Any, List, Optional, Tuple, Union
 
 __all__ = ['UserInput']
 
 class UserInput:
-    def __init__(self, text: str, trigger_char: str = '/') -> None:
+    def __init__(self, text: str, trigger_username: str, trigger_char: str = '/') -> None:
         self.__trig_char = trigger_char
         self.__original_input = text
-        self.__parts = self.__original_input.split(' ', 1)
+        # Clearing username mention
+        if self.__original_input.startswith(trigger_username): 
+            self.__original_input = self.__original_input.replace(trigger_username, '').strip()
+        # Parsing
         self.__keyword, self.__args = self.__split_input(self.__original_input, self.__trig_char)
+        self.__parts = self.__original_input.split(' ', 1)
 
     @property
     def keyword(self) -> str:

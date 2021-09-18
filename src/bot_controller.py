@@ -126,13 +126,14 @@ class BotController(AbstractBotController):
         payload['message']['user']['username'] = username
         self.__web_socket_client.send(WebSocketMessage(label='chat', payload=payload))
 
-    def whisper(self, message: str, recipient: dict) -> None:
+    def whisper(self, message: Union[str, List[str]], recipient: dict) -> None:
+        lines = message if isinstance(message, list) else [message]
         bot_user = self.__settings.user
         payload = {
             'roomId': self.__settings.room_id,
             'user': bot_user,
             'message': {
-                'message': '%s' % message,
+                'message': ' </br>\n'.join(lines),
                 'user': bot_user,
                 'recipients': [
                     recipient,

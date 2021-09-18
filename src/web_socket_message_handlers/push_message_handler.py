@@ -27,27 +27,24 @@ class PushMessageHandler(AbstractWebSocketMessageHandler):
 
     def handle(self, ws_message: WebSocketMessage) -> None:
         # Character(s), the message starts with
+        trigger_username = '@' + self.__settings.user['username']
         trigger_char = '/'
         # Payload extracting
         pushMessage = PushMessage(ws_message)
         # Validation
-        if self.__isValidMessage(pushMessage, trigger_char): 
-            userInput = UserInput(pushMessage.message, trigger_char)
+        if self.__isValidMessage(pushMessage, trigger_username, trigger_char): 
+            userInput = UserInput(pushMessage.message, trigger_username, trigger_char)
             self.__command_handler.handle(userInput, pushMessage)
 
 
-    def __isValidMessage(self, pushMessage: PushMessage, trigger_char: str = '/') -> bool:
+    def __isValidMessage(self, pushMessage: PushMessage, trigger_username: str, trigger_char: str = '/') -> bool:
         isUserValid = True
         isMessageValid = True
         # User validation
         if pushMessage.user is None or pushMessage.user.id == self.__settings.user_id: 
             isUserValid = False
-        else: 
-            isUserValid = True
         # Message validation
-        if not (pushMessage.message.startswith(trigger_char) and len(pushMessage.message) > 1):
+        if not ((pushMessage.message.startswith(trigger_char) or pushMessage.message.startswith(trigger_username)) and len(pushMessage.message) > 1):
             isMessageValid = False
-        else: 
-            isMessageValid = True
         return isUserValid and isMessageValid
         

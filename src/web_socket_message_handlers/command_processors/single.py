@@ -20,17 +20,16 @@ class SingleProcessor(AbstractCommandProcessor):
         return 'Creates single line messages'
 
     def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
-        help_msg = 'Possible options: /single {name} {message} {description (optional)}'
+        help_msg = 'Using: /single {command name} {message text} {description (optional)}'
         if userInput.arguments:
             name, message = userInput.args_get(0), userInput.args_get(1)
             description = userInput.args_get(2)
             if message and name:
                 if self.__command_controller.create_single(name, message, pushMessage.user.id, description):
-                    self.__bot_controller.info_chat('Done!')
+                    self.__bot_controller.info_chat('Done! Static command /%s is created' % name)
                 else:
-                    self.__bot_controller.info_chat('Failed!')
+                    self.__bot_controller.info_chat('Failed to create /%s command! Possibly, this name is already in use' % name)
             else:
                 self.__bot_controller.chat(help_msg)
         else:
             self.__bot_controller.chat(help_msg)
-

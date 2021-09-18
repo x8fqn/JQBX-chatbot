@@ -20,7 +20,7 @@ class CommandCommandProcessor(AbstractCommandProcessor):
         return 'Commands control'
 
     def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
-        help_msg = 'Possible options: /command remove {command_name}'
+        help_msg = 'Using: /command remove {command_name}'
         if userInput.arguments:
             cmd_name = userInput.args_get(1)
             if cmd_name:

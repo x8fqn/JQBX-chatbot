@@ -25,6 +25,10 @@ class HelpCommandProcessor(AbstractCommandProcessor):
         return 'This'
 
     def process(self, pushMessage: PushMessage, userInput: UserInput) -> None: 
-        self.__bot_controller.chat([
+        msg = [
         '%s: %s' % ('Built-ins', ', '.join(self.__processors.command_processors.keys())),
-        '%s: %s' % ('Custom commands', ', '.join(self.__command_controller.command_list()))])
+        '%s: %s' % ('Custom commands', ', '.join(self.__command_controller.command_list()))]
+        if not pushMessage.recipients:
+            self.__bot_controller.chat(msg)
+        else:
+            self.__bot_controller.whisper(msg, pushMessage.payload.get('user'))

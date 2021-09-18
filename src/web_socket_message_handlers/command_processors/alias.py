@@ -20,17 +20,16 @@ class AliasesProcessor(AbstractCommandProcessor):
         return 'Alias management'
 
     def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
-        help_msg = 'Possible options: /alias {name} {command} {description (optional)}'
+        help_msg = 'Possible options: /alias {alias command name} {command} {description (optional)}'
         if userInput.arguments:
             name, keyword = userInput.args_get(0), userInput.args_get(1)
             description = userInput.args_get(2)
             if keyword and name:
                 if self.__command_controller.create_alias(name, keyword, pushMessage.user.id, description):
-                    self.__bot_controller.info_chat('Done!')
+                    self.__bot_controller.info_chat('Done! Alias of %s command is created. Use /%s to try it out')
                 else:
-                    self.__bot_controller.info_chat('Failed!')
+                    self.__bot_controller.info_chat('Failed to create /%s alias of /%s! Possibly, this name is already in use' % (name, keyword))
             else:
                 self.__bot_controller.chat(help_msg)
         else:
             self.__bot_controller.chat(help_msg)
-
