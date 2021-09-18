@@ -4,6 +4,7 @@ from src.web_socket_message_handlers.command_processors.abstract_command_process
 from src.web_socket_message_handlers.command_processors.choose import ChooseCommandProcessor
 from src.web_socket_message_handlers.command_processors.dadjoke import DadjokeCommandProcessor
 from src.web_socket_message_handlers.command_processors.ro import RockOutCommandProcessor
+from src.web_socket_message_handlers.command_processors.no import NockOutCommandProcessor
 from src.web_socket_message_handlers.command_processors.urban import UrbanCommandProcessor
 from src.web_socket_message_handlers.command_processors.charlixcx import CharlixcxCommandProcessor
 from src.web_socket_message_handlers.command_processors.yt import YtCommandProcessor
@@ -23,6 +24,7 @@ class Processors:
         DadjokeCommandProcessor(),
         TvCommandProcessor(),
         RockOutCommandProcessor(),
+        NockOutCommandProcessor(),
         UrbanCommandProcessor(),
         ChooseCommandProcessor(),
         CharlixcxCommandProcessor(),
