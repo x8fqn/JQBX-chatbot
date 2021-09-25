@@ -36,6 +36,14 @@ class AbstractBotController(ABC):
     def nope(self) -> None:
         pass
 
+    @abstractmethod
+    def joinDJ(self) -> None:
+        pass
+
+    @abstractmethod
+    def leaveDJ(self) -> None:
+        pass
+
     @property
     @abstractmethod
     def star(self) -> None:
@@ -55,6 +63,11 @@ class AbstractBotController(ABC):
     @abstractmethod
     def starred(self) -> bool:
         pass
+
+    @property
+    @abstractmethod
+    def isDJ(self) -> bool:
+        pass
     
     @abstractmethod
     def reset_vote(self) -> None:
@@ -72,6 +85,7 @@ class BotController(AbstractBotController):
         self.__web_socket_client = web_socket_client
         self.__doped: bool = False
         self.__noped: bool = False
+        self.__isDJ: bool = False
         BotController.__instance = self
 
     @staticmethod
@@ -170,6 +184,27 @@ class BotController(AbstractBotController):
             'user': self.__settings.user
         }))
         self.__starred = True
+    
+    def joinDJ(self) -> None:
+        self.__web_socket_client.send(WebSocketMessage(label='joinDjs', payload={
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user
+        }))
+        self.__isDJ = True
+
+    def leaveDJ(self) -> None:
+        self.__web_socket_client.send(WebSocketMessage(label='leaveDjs', payload={
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user
+        }))
+        self.__isDJ = False
+    
+    def getNextTrack(self, track: dict) -> None:
+        self.__web_socket_client.send(WebSocketMessage(label='leaveDjs', payload={
+            'roomId': self.__settings.room_id,
+            'user': self.__settings.user,
+            'track': track
+        }))
 
     @property
     def doped(self) -> bool:
@@ -182,6 +217,10 @@ class BotController(AbstractBotController):
     @property
     def starred(self) -> bool:
         return self.__starred
+    
+    @property
+    def isDJ(self) -> bool:
+        return self.__isDJ
 
     def reset_vote(self) -> None:
         self.__doped = False

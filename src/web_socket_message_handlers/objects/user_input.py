@@ -13,7 +13,7 @@ class UserInput:
             self.__original_input = self.__original_input.replace(trigger_username, '').strip()
         # Parsing
         self.__keyword, self.__args = self.__split_input(self.__original_input, self.__trig_char)
-        self.keyword = self.keyword.lower()
+        self.__keyword = self.keyword.lower()
         self.__parts = self.__original_input.split(' ', 1)
 
     @property

@@ -1,10 +1,11 @@
 import logging, os
 from src.helpers import get_main_dir
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from src.bot_controller import BotController, AbstractBotController
 from src.db_controllers.track_history import AbstractTrackHistory, TrackHistory
+from src.web_socket_message_handlers.objects.push_message import PushMessage
 from dateutil import parser
 
 
@@ -43,7 +44,12 @@ class AbstractRoomState(ABC):
     @abstractmethod
     def max_user_count(self) -> int:
         pass
-    
+
+    @property
+    @abstractmethod
+    def messages(self) -> List[PushMessage]:
+        pass
+
     @abstractmethod
     def set_room_title(self, room_title: str) -> None:
         pass
@@ -68,6 +74,9 @@ class AbstractRoomState(ABC):
     def set_votes(self, thumbsUp: int, thumbsDown: int, stars: int, max_user_count: int) -> None:
         pass
 
+    @abstractmethod
+    def add_message(self, message: PushMessage) -> None:
+        pass
 
 class RoomState(AbstractRoomState):
     __instance: Optional['RoomState'] = None
@@ -85,6 +94,7 @@ class RoomState(AbstractRoomState):
         self.__max_user_count: int = None
         self.__bot_controller = bot_controller
         self.__room_title: Optional[str] = None
+        self.__messages: List[PushMessage] = []
         self.__track_history = track_history
         RoomState.__instance = self
 
@@ -127,6 +137,10 @@ class RoomState(AbstractRoomState):
     def max_user_count(self) -> int:
         return self.__max_user_count
 
+    @property
+    def messages(self) -> List[PushMessage]:
+        return self.__messages
+
     def set_mod_ids(self, mod_ids: List[str]) -> None:
         self.__mod_ids = mod_ids
 
@@ -160,3 +174,8 @@ class RoomState(AbstractRoomState):
         self.__star_count = star_count
         self.__track_history.update_track_votes(parser.parse(self.__current_track['startedAt']).timestamp(), 
             thumbUp_count, thumbDown_count, star_count, max_user_count)
+
+    def add_message(self, message: PushMessage) -> None:
+        if len(self.__messages) >= 100:
+            del self.__messages[100:]
+        self.__messages.insert(0, message)

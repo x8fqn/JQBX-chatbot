@@ -18,6 +18,8 @@ from src.web_socket_message_handlers.command_processors.single import SingleProc
 from src.web_socket_message_handlers.command_processors.tv import TvCommandProcessor
 from src.web_socket_message_handlers.command_processors.command import CommandCommandProcessor
 from src.web_socket_message_handlers.command_processors.botchat import AlertCommandProcessor, SpeakCommandProcessor
+from src.web_socket_message_handlers.command_processors.fixgif import FixGifCommandProcessor
+from src.web_socket_message_handlers.command_processors.wttr import WttrCommandProcessor
 
 class Processors:
     __command_processors: List[AbstractCommandProcessor] = [
@@ -39,7 +41,9 @@ class Processors:
         SingleProcessor(),
         CommandCommandProcessor(),
         AlertCommandProcessor(),
-        SpeakCommandProcessor()
+        SpeakCommandProcessor(),
+        FixGifCommandProcessor(),
+        WttrCommandProcessor()
     ]
     
     def __init__(self) -> None:
