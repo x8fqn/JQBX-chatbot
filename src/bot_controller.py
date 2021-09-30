@@ -75,24 +75,24 @@ class AbstractBotController(ABC):
 
 
 class BotController(AbstractBotController):
-    __instance: Optional['BotController'] = None
+    # __instance: Optional['BotController'] = None
 
-    def __init__(self, web_socket_client: AbstractWebSocketClient = WebSocketClient.get_instance(),
-    settings: AbstractSettings = Settings.get_instance()):
-        if BotController.__instance:
-            raise Exception('Use get_instance() instead!')
+    def __init__(self, web_socket_client: AbstractWebSocketClient,
+    settings: AbstractSettings):
+        # if BotController.__instance:
+        #     raise Exception('Use get_instance() instead!')
         self.__settings = settings
         self.__web_socket_client = web_socket_client
         self.__doped: bool = False
         self.__noped: bool = False
         self.__isDJ: bool = False
-        BotController.__instance = self
+        # BotController.__instance = self
 
-    @staticmethod
-    def get_instance() -> 'BotController':
-        if BotController.__instance is None:
-            BotController()
-        return BotController.__instance
+    # @staticmethod
+    # def get_instance() -> 'BotController':
+    #     if BotController.__instance is None:
+    #         BotController()
+    #     return BotController.__instance
 
     def update_user(self) -> None:
         payload = {

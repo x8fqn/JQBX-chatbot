@@ -1,17 +1,13 @@
-from typing import Optional, List
-from src.bot_controller import AbstractBotController, BotController
-from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.web_socket_message_handlers.objects.user_input import UserInput
 from src.web_socket_message_handlers.objects.push_message import PushMessage
-
+from src.command_controller import AbstractCommandController
+from src.bot_controller import AbstractBotController
+from src.command_controller import AbstractCommandController
+from src.room_state import AbstractRoomState
+from src.settings import AbstractSettings
 
 class FixGifCommandProcessor(AbstractCommandProcessor):
-    def __init__(self, room_state: AbstractRoomState = RoomState.get_instance(),
-                 bot_controller: AbstractBotController = BotController.get_instance()):
-        self.__room_state = room_state
-        self.__bot_controller = bot_controller
-
     @property
     def keyword(self) -> str:
         return 'fixgif'
@@ -22,7 +18,8 @@ class FixGifCommandProcessor(AbstractCommandProcessor):
             Fixes the last link to gif 
         '''
 
-    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput,
+    bot_controller: AbstractBotController, room_state: AbstractRoomState, settings: AbstractSettings, command_controller: AbstractCommandController) -> None:
         isFixed = False
         extensions = ('.gif', '.jpg', '.jpeg', '.png')
         if userInput.text:
@@ -31,15 +28,15 @@ class FixGifCommandProcessor(AbstractCommandProcessor):
                     fixed_link = url + '#.gif'
                     isFixed = True
         else:
-            for message in self.__room_state.messages:
+            for message in room_state.messages:
                 if message.message.startswith(('https://', 'http://')) & (not message.message.endswith(extensions)):
                     url = message.message
                     fixed_link = url + '#.gif'
                     isFixed = True
                     break
         if isFixed:
-            self.__bot_controller.chat(fixed_link)
+            bot_controller.chat(fixed_link)
         else:
-            self.__bot_controller.info_chat('Can\'t find or fix link. Try /%s {link}' % userInput.keyword)
+            bot_controller.info_chat('Can\'t find or fix link. Try /%s {link}' % userInput.keyword)
 
 

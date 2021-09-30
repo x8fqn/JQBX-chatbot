@@ -79,11 +79,11 @@ class AbstractRoomState(ABC):
         pass
 
 class RoomState(AbstractRoomState):
-    __instance: Optional['RoomState'] = None
+    # __instance: Optional['RoomState'] = None
 
     def __init__(self, bot_controller: AbstractBotController, track_history: AbstractTrackHistory = TrackHistory()):
-        if RoomState.__instance:
-            raise Exception('Use get_instance() instead!')
+        # if RoomState.__instance:
+        #     raise Exception('Use get_instance() instead!')
         self.__mod_ids: List[str] = []
         self.__users: List[dict] = []
         self.__djs: List[dict] = []
@@ -96,14 +96,14 @@ class RoomState(AbstractRoomState):
         self.__room_title: Optional[str] = None
         self.__messages: List[PushMessage] = []
         self.__track_history = track_history
-        RoomState.__instance = self
+        # RoomState.__instance = self
 
-    @staticmethod
-    def get_instance(bot_controller: AbstractBotController = BotController.get_instance(),
-    track_history: AbstractTrackHistory = TrackHistory()) -> 'RoomState':
-        if RoomState.__instance is None:
-            RoomState(bot_controller)
-        return RoomState.__instance
+    # @staticmethod
+    # def get_instance(bot_controller: AbstractBotController = BotController.get_instance(),
+    # track_history: AbstractTrackHistory = TrackHistory()) -> 'RoomState':
+    #     if RoomState.__instance is None:
+    #         RoomState(bot_controller)
+    #     return RoomState.__instance
 
     @property
     def room_title(self) -> Optional[str]:

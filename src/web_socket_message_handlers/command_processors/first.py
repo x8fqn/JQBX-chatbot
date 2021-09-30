@@ -3,22 +3,18 @@ from typing import Optional, List
 from dateutil import parser as dateparser
 
 from src.jqbx_api import AbstractJQBXAPI, JQBXAPI
-from src.bot_controller import AbstractBotController, BotController
-from src.room_state import AbstractRoomState, RoomState
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
-from src.settings import AbstractSettings, Settings
 from src.web_socket_message_handlers.objects.user_input import UserInput
 from src.web_socket_message_handlers.objects.push_message import PushMessage
+from src.command_controller import AbstractCommandController
+from src.bot_controller import AbstractBotController
+from src.command_controller import AbstractCommandController
+from src.room_state import AbstractRoomState
+from src.settings import AbstractSettings
 
 
 class FirstCommandProcessor(AbstractCommandProcessor):
-    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-                 room_state: AbstractRoomState = RoomState.get_instance(),
-                 settings: AbstractSettings = Settings.get_instance(),
-                 jqbx_api: AbstractJQBXAPI = JQBXAPI()):
-        self.__bot_controller = bot_controller
-        self.__settings = settings
-        self.__room_state = room_state
+    def __init__(self, jqbx_api: AbstractJQBXAPI = JQBXAPI()):
         self.__api = jqbx_api
 
     @property
@@ -29,8 +25,9 @@ class FirstCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Get info about the first play of the current track on JQBX'
 
-    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
-        jqbx_first_request = self.__api.firsts(self.__room_state.current_track['uri'])
+    def process(self, pushMessage: PushMessage, userInput: UserInput,
+    bot_controller: AbstractBotController, room_state: AbstractRoomState, settings: AbstractSettings, command_controller: AbstractCommandController) -> None:
+        jqbx_first_request = self.__api.firsts(room_state.current_track['uri'])
         firstDB = {
             'track_name': str(jqbx_first_request['track']['name']),
             'artists': ", ".join([i['name'] for i in jqbx_first_request['track']['artists']]),
@@ -53,19 +50,14 @@ class FirstCommandProcessor(AbstractCommandProcessor):
                 firstDB['thumbsDown'],
                 's' if int(firstDB['thumbsDown']) % 10 != 1 else '')]
 
-        if (self.__room_state.djs[0]['uri'] == jqbx_first_request['user']['uri']):
+        if (room_state.djs[0]['uri'] == jqbx_first_request['user']['uri']):
             if jqbx_first_request['room']['_id'] == self.__settings.room_id:
                 msg.insert(0, ':cake:')
             else:
                 msg.insert(0, ':cookie:')
-        self.__bot_controller.chat(' '.join(msg))
+        bot_controller.chat(' '.join(msg))
 
 class AutoFirstCommandProcessor(AbstractCommandProcessor):
-    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-    settings: AbstractSettings = Settings.get_instance()):
-        self.__settings = settings
-        self.__bot_controller = bot_controller
-
     @property
     def keyword(self) -> str:
         return 'auto-first'
@@ -74,10 +66,11 @@ class AutoFirstCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Switch "first" on every tune'
 
-    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
-        if self.__settings.autofirst_isEnabled:
-            self.__settings.autofirst_set_enable(False)
-            return self.__bot_controller.chat('Auto-first deactivated')
+    def process(self, pushMessage: PushMessage, userInput: UserInput,
+    bot_controller: AbstractBotController, room_state: AbstractRoomState, settings: AbstractSettings, command_controller: AbstractCommandController) -> None:
+        if settings.autofirst_isEnabled:
+            settings.autofirst_set_enable(False)
+            return bot_controller.chat('Auto-first deactivated')
         else:
-            self.__settings.autofirst_set_enable(True)
-            return self.__bot_controller.chat('Auto-first activated')
+            settings.autofirst_set_enable(True)
+            return bot_controller.chat('Auto-first activated')

@@ -1,12 +1,12 @@
 from typing import Optional, List, Callable
 
-from src.bot_controller import AbstractBotController, BotController
-from src.room_state import AbstractRoomState, RoomState
+from src.bot_controller import AbstractBotController
+from src.room_state import AbstractRoomState
 
 
 class VotingMachine:
-    def __init__(self, ack_word: str, bot_controller: AbstractBotController = BotController.get_instance(),
-                 room_state: AbstractRoomState = RoomState.get_instance()):
+    def __init__(self, ack_word: str, bot_controller: AbstractBotController,
+                 room_state: AbstractRoomState):
         self.__current_track: Optional[dict] = None
         self.__voter_ids: List[str] = []
         self.__ack_word = ack_word

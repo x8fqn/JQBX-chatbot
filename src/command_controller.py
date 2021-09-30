@@ -31,8 +31,8 @@ class AbstractCommandController(ABC):
 class CommandController(AbstractCommandController):
     __instance: Optional['CommandController'] = None
 
-    def __init__(self, custom_commands: AbstractCustomCommandsDB = CustomCommandsDB(),
-    bot_controller: AbstractBotController = BotController.get_instance()) -> None:
+    def __init__(self, bot_controller: AbstractBotController,
+     custom_commands: AbstractCustomCommandsDB = CustomCommandsDB()) -> None:
         self.__commands = custom_commands
         self.__bot_controller = bot_controller
         CommandController.__instance = self

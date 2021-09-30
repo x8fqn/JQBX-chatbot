@@ -1,16 +1,14 @@
+from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.web_socket_message_handlers.objects.user_input import UserInput
 from src.web_socket_message_handlers.objects.push_message import PushMessage
-from src.settings import AbstractSettings, Settings
-from src.bot_controller import AbstractBotController, BotController
-from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
+from src.command_controller import AbstractCommandController
+from src.bot_controller import AbstractBotController
+from src.command_controller import AbstractCommandController
+from src.room_state import AbstractRoomState
+from src.settings import AbstractSettings
 
 
-class TvCommandProcessor(AbstractCommandProcessor):
-    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance(),
-    settings: AbstractSettings = Settings.get_instance()) -> None:
-        self.__bot_controller = bot_controller
-        self.__settings = settings       
-
+class TvCommandProcessor(AbstractCommandProcessor):  
     @property
     def keyword(self) -> str:
         return 'tv'
@@ -19,5 +17,6 @@ class TvCommandProcessor(AbstractCommandProcessor):
     def help(self) -> str:
         return 'Get JQBX TV link'
 
-    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
-        self.__bot_controller.chat('https://tv.jqbx.fm/tv/%s' % self.__settings.room_id)
+    def process(self, pushMessage: PushMessage, userInput: UserInput,
+    bot_controller: AbstractBotController, room_state: AbstractRoomState, settings: AbstractSettings, command_controller: AbstractCommandController) -> None:
+        bot_controller.chat('https://tv.jqbx.fm/tv/%s' % settings.room_id)

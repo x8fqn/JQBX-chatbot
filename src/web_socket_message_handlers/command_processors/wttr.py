@@ -1,16 +1,15 @@
-from typing import Optional, List
-from src.bot_controller import AbstractBotController, BotController
-from src.room_state import AbstractRoomState, RoomState
+from urllib.parse import quote
 from src.web_socket_message_handlers.command_processors.abstract_command_processor import AbstractCommandProcessor
 from src.web_socket_message_handlers.objects.user_input import UserInput
 from src.web_socket_message_handlers.objects.push_message import PushMessage
-from urllib.parse import quote
+from src.command_controller import AbstractCommandController
+from src.bot_controller import AbstractBotController
+from src.command_controller import AbstractCommandController
+from src.room_state import AbstractRoomState
+from src.settings import AbstractSettings
 
 
 class WttrCommandProcessor(AbstractCommandProcessor):
-    def __init__(self, bot_controller: AbstractBotController = BotController.get_instance()):
-        self.__bot_controller = bot_controller
-
     @property
     def keyword(self) -> str:
         return 'wttr'
@@ -21,8 +20,9 @@ class WttrCommandProcessor(AbstractCommandProcessor):
             Display the weather
         '''
 
-    def process(self, pushMessage: PushMessage, userInput: UserInput) -> None:
+    def process(self, pushMessage: PushMessage, userInput: UserInput,
+    bot_controller: AbstractBotController, room_state: AbstractRoomState, settings: AbstractSettings, command_controller: AbstractCommandController) -> None:
         url = 'http://wttr.in/%s_q0np.png' % (quote(userInput.text if userInput.text else ''))
-        self.__bot_controller.chat(url)
+        bot_controller.chat(url)
 
 

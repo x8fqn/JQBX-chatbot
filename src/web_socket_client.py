@@ -1,7 +1,6 @@
-import logging, json
+import logging, json, re
 from abc import ABC, abstractmethod
 from typing import Callable, Optional, Any
-
 from websocket import WebSocketApp
 from src.web_socket_message import WebSocketMessage
 
@@ -25,8 +24,8 @@ class WebSocketClient(AbstractWebSocketClient):
     __instance: Optional['WebSocketClient'] = None
 
     def __init__(self):
-        if WebSocketClient.__instance:
-            raise Exception('Use get_instance() instead!')
+        # if WebSocketClient.__instance:
+        #     raise Exception('Use get_instance() instead!')
         self.__ws = WebSocketApp('wss://jqbx.fm/socket.io/?EIO=3&transport=websocket')
         WebSocketClient.__instance = self
 
@@ -56,12 +55,15 @@ class WebSocketClient(AbstractWebSocketClient):
 
     @staticmethod
     def __parse(raw_message: str) -> WebSocketMessage:
-        stripped = raw_message.strip()
-        parts = stripped.split('[', 1)
-        label = None
-        payload = None
-        if len(parts) > 1:
-            json_array = json.loads('[%s' % parts[1])
-            label = json_array[0]
-            payload = None if len(json_array) == 1 else json_array[1]
-        return WebSocketMessage(int(parts[0]), label, payload)
+        parsing = [match for match in enumerate(re.finditer(r'(\d+)(.*)', raw_message))][0][1].groups()
+        code = int(parsing[0])
+        payload = json.loads(parsing[1]) if parsing[1] != '' else None
+        if isinstance(payload, list):
+            label = payload[0]
+            if len(payload) > 1:
+                payload = payload[1]
+            else:
+                payload = None
+        else:
+            label = None
+        return WebSocketMessage(code, label, payload)
