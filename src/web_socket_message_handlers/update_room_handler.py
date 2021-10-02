@@ -1,13 +1,7 @@
-import os
 from typing import List
-
-from src.bot_controller import AbstractBotController, BotController
-from src.command_controller import AbstractCommandController
-from src.settings import AbstractSettings, Settings
-from src.room_state import AbstractRoomState, RoomState
-from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
-from src.web_socket_client import AbstractWebSocketClient
+from src.web_socket_message import WebSocketMessage
+from src.core import Core
 
 
 class UpdateRoomHandler(AbstractWebSocketMessageHandler):
@@ -18,57 +12,55 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
     def message_label(self) -> str:
         return 'update-room'
 
-    def handle(self, message: WebSocketMessage, web_socket_client: AbstractWebSocketClient,
-    settings: AbstractSettings, bot_controller: AbstractBotController,
-    room_state: AbstractRoomState, command_controller: AbstractCommandController) -> None:
+    def handle(self, message: WebSocketMessage, core: Core) -> None:
         payload = message.payload
-        self.__update_mod_ids(payload, room_state)
-        self.__update_users(payload, room_state, settings, bot_controller)
-        self.__update_room_title(payload, room_state)
-        self.__update_votes(payload, room_state)
-        self.__initial_track_update(payload, room_state)
+        self.__update_mod_ids(payload, core)
+        self.__update_users(payload, core)
+        self.__update_room_title(payload, core)
+        self.__update_votes(payload, core)
+        self.__initial_track_update(payload, core)
 
-    def __update_mod_ids(self, payload: dict, room_state: AbstractRoomState) -> None:
+    def __update_mod_ids(self, payload: dict, core: Core) -> None:
         admins = payload.get('admin', [])
         mods = payload.get('mods', [])
         if admins + mods:
-            room_state.set_mod_ids([x.split(':')[-1] for x in list(set(admins + mods))])
+            core.room_state.set_mod_ids([x.split(':')[-1] for x in list(set(admins + mods))])
 
-    def __update_users(self, payload: dict, room_state: AbstractRoomState, settings: AbstractSettings, bot_controller: AbstractBotController) -> None:
+    def __update_users(self, payload: dict, core: Core) -> None:
         users: List[dict] = payload.get('users', [])
         djs: List[dict] = payload.get('djs', [])
-        if room_state.users:
+        if core.room_state.users:
             new_users = [
                 user for user in users
-                if user['id'] != settings.user_id
-                   and user['id'] not in [y['id'] for y in room_state.users]
+                if user['id'] != core.settings.user_id
+                   and user['id'] not in [y['id'] for y in core.room_state.users]
             ]
 
         if 'new_users' in locals():
-            if settings.welcome_isEnabled:
+            if core.settings.welcome_isEnabled:
                 for user in new_users:
-                    if settings.welcome_isWhisper:
-                        bot_controller.whisper(settings.welcome_message, user)
+                    if core.settings.welcome_isWhisper:
+                        core.bot_controller.whisper(core.settings.welcome_message, user)
                     else:
-                        bot_controller.chat(settings.welcome_message)
+                        core.bot_controller.chat(core.settings.welcome_message)
 
         if 'users' in payload:
-            room_state.set_users(users)
+            core.room_state.set_users(users)
 
         if 'djs' in payload:
-            room_state.set_djs(djs)
+            core.room_state.set_djs(djs)
 
-    def __initial_track_update(self, payload: dict, room_state: AbstractRoomState) -> None:
+    def __initial_track_update(self, payload: dict, core: Core) -> None:
         tracks = payload.get('tracks', [])
         if tracks:
-            room_state.set_current_track(tracks[0])
+            core.room_state.set_current_track(tracks[0])
 
-    def __update_room_title(self, payload: dict, room_state: AbstractRoomState) -> None:
+    def __update_room_title(self, payload: dict, core: Core) -> None:
         room_title = payload.get('title')
         if room_title:
-            room_state.set_room_title(room_title)
+            core.room_state.set_room_title(room_title)
 
-    def __update_votes(self, payload: dict, room_state: AbstractRoomState) -> None:
+    def __update_votes(self, payload: dict, core: Core) -> None:
         if 'currentTrack' not in payload.keys():
             return
         payload = payload.get('currentTrack')
@@ -81,4 +73,4 @@ class UpdateRoomHandler(AbstractWebSocketMessageHandler):
             thumbDown_count = 0
         if not star_count:
             star_count = 0
-        room_state.set_votes(thumbUp_count, thumbDown_count, star_count, room_state.max_user_count)
+        core.room_state.set_votes(thumbUp_count, thumbDown_count, star_count, core.room_state.max_user_count)

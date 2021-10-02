@@ -1,5 +1,4 @@
-import os, sys
-from typing import Dict, List
+import os
 
 def get_bot_user(username: str, user_id: str, image_url: str, thumbUpImage: str = None,
 thumbDownImage: str = None, djImage: str = None) -> dict:
@@ -20,8 +19,5 @@ thumbDownImage: str = None, djImage: str = None) -> dict:
         user.update({'thumbsDownImage': thumbDownImage})
     return user
 
-def get_main_dir() -> str:
-    return os.getcwd()
-
 def get_config_path() -> str:
-    return os.path.join(os.getcwd(), 'config')
+    return os.path.join(os.getcwd(), 'data')

@@ -21,19 +21,8 @@ class AbstractWebSocketClient(ABC):
 
 
 class WebSocketClient(AbstractWebSocketClient):
-    __instance: Optional['WebSocketClient'] = None
-
     def __init__(self):
-        # if WebSocketClient.__instance:
-        #     raise Exception('Use get_instance() instead!')
         self.__ws = WebSocketApp('wss://jqbx.fm/socket.io/?EIO=3&transport=websocket')
-        WebSocketClient.__instance = self
-
-    @staticmethod
-    def get_instance() -> 'WebSocketClient':
-        if WebSocketClient.__instance is None:
-            WebSocketClient()
-        return WebSocketClient.__instance
 
     def register(self, on_open: Callable[[], None], on_message: Callable[[WebSocketMessage], None],
                  on_error: Callable[[Any], None], on_close: Callable[[], None]) -> None:

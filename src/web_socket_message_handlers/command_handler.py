@@ -14,14 +14,8 @@ from src.jqbx_api import JQBXAPI
 
 
 class CommandHandler:
-    def __init__(self
-    # bot_controller: AbstractBotController = BotController.get_instance(),
-    # command_comtroller: AbstractCommandController = CommandController.get_instance()
-    ) -> None:
-        # self.__bot_controller = bot_controller
-        # self.__command_controller = command_comtroller
+    def __init__(self) -> None:
         self.__processors = Processors()
-
 
     def handle(self, userInput: UserInput, pushMessage_obj: PushMessage, 
     bot_controller: AbstractBotController, room_state: AbstractRoomState, settings: AbstractSettings, command_controller: AbstractCommandController):

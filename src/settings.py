@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
 # from src.bot_controller import AbstractBotController, BotController
 from src.config import AbstractConfig, Config
 from src.helpers import get_bot_user 
@@ -70,20 +69,32 @@ class AbstractSettings(ABC):
     def autofirst_isEnabled(self) -> bool:
         pass
 
-class Settings(AbstractSettings):
-    __instance: Optional['Settings'] = None
+    @property
+    @abstractmethod
+    def spotify_refresh_token(self) -> str:
+        pass
 
+    @property
+    @abstractmethod
+    def spotify_client_id(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def spotify_client_secret(self) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def spotify_playlist_playback(self) -> str:
+        pass
+
+    
+class Settings(AbstractSettings):
     def __init__(self, config: AbstractConfig = Config()):
         self.__config = config
         self.__bot_user = get_bot_user(self.__config.get('username'), self.__config.get('user_id'), self.__config.get('image_url'), 
             self.__config.get('thumbsUpImage_url'), self.__config.get('thumbsDownImage_url'), self.__config.get('djImage_url'))
-        Settings.__instance = self
-
-    @staticmethod
-    def get_instance() -> 'Settings':
-        if Settings.__instance is None:
-            Settings()
-        return Settings.__instance
 
     @property
     def log_level(self) -> int:
@@ -139,7 +150,7 @@ class Settings(AbstractSettings):
     @property
     def welcome_isWhisper(self) -> bool:
         status = self.__config.get('welcome_whisper')
-        return False if status == None else status
+        return status if status else None
 
     def autofirst_set_enable(self, enable: bool) -> None:
         self.__config.set('auto-first_enabled', enable)
@@ -147,6 +158,24 @@ class Settings(AbstractSettings):
     @property
     def autofirst_isEnabled(self) -> bool:
         status = self.__config.get('auto-first_enabled')
-        return False if status == None else status
+        return status if status else None
 
+    @property
+    def spotify_refresh_token(self) -> str:
+        token = self.__config.get('spotify_refresh_token')
+        return token if token else None
 
+    @property
+    def spotify_client_id(self) -> str:
+        client_id = self.__config.get('spotify_client_id')
+        return client_id if client_id else None
+
+    @property
+    def spotify_client_secret(self) -> str:
+        client_secret = self.__config.get('spotify_client_secret')
+        return client_secret if client_secret else None
+
+    @property
+    def spotify_playlist_playback(self) -> str:
+        playlist_playback = self.__config.get('spotify_playlist_playback')
+        return playlist_playback if playlist_playback else None

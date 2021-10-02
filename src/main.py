@@ -1,35 +1,27 @@
 import logging, time
-import traceback
-from src.bot_controller import AbstractBotController, BotController
-from src.command_controller import AbstractCommandController, CommandController
-from src.room_state import AbstractRoomState, RoomState
-from src.settings import AbstractSettings, Settings
-from src.web_socket_client import AbstractWebSocketClient, WebSocketClient
 from src.web_socket_message import WebSocketMessage
 from src.web_socket_message_handlers.web_socket_message_handlers import web_socket_message_handler_map
 from src.web_socket_message_handlers.abstract_web_socket_message_handler import AbstractWebSocketMessageHandler
+from src.core import Core
 
 class UnexpectedStop(Exception): 
     pass
 
+
 class Main():
     def __init__(self) -> None:
-        self.settings: AbstractSettings = Settings()
-        self.ws_client: AbstractWebSocketClient = WebSocketClient()
-        self.bot_controller: AbstractBotController = BotController(self.ws_client, self.settings)
-        self.room_state: AbstractRoomState = RoomState(self.bot_controller)
-        self.command_controller: AbstractCommandController = CommandController(self.bot_controller)
-        logging.basicConfig(level=self.settings.log_level, format='%(asctime)s - %(module)s -> %(funcName)s - [%(levelname)s] - %(message)s')
+        self.core = Core()
+        logging.basicConfig(level=self.core.settings.log_level, format='%(asctime)s - %(module)s -> %(funcName)s - [%(levelname)s] - %(message)s')
 
     def run(self):
-        self.ws_client.register(self.__on_open, self.__on_message, self.__on_error, self.__on_close)
-        self.ws_client.run()
+        self.core.ws_client.register(self.__on_open, self.__on_message, self.__on_error, self.__on_close)
+        self.core.ws_client.run()
 
     def __on_open(self) -> None:
         logging.info('Websocket connection OPENED')
-        self.ws_client.send(WebSocketMessage(label='join', payload={
-            'roomId': self.settings.room_id,
-            'user': self.settings.user
+        self.core.ws_client.send(WebSocketMessage(label='join', payload={
+            'roomId': self.core.settings.room_id,
+            'user': self.core.settings.user
         }))
 
     def __on_message(self, message: WebSocketMessage) -> None:
@@ -37,7 +29,7 @@ class Main():
         try:
             handler: AbstractWebSocketMessageHandler = web_socket_message_handler_map.get(message.label, None)
             if handler:
-                handler.handle(message, self.ws_client, self.settings, self.bot_controller, self.room_state, self.command_controller)
+                handler.handle(message, self.core)
         except Exception as e:
             logging.error(e)
 

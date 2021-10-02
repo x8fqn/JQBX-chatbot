@@ -1,10 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Union
-from src.bot_controller import AbstractBotController, BotController
 from src.db_controllers.custom_commands import Single, Alias, CustomCommandsDB, AbstractCustomCommandsDB
-
-from src.web_socket_message_handlers.objects.user_input import UserInput
-from src.web_socket_message_handlers.objects.push_message import PushMessage
 
 class AbstractCommandController(ABC):
     @abstractmethod
@@ -29,18 +25,8 @@ class AbstractCommandController(ABC):
 
 
 class CommandController(AbstractCommandController):
-    __instance: Optional['CommandController'] = None
-
-    def __init__(self, bot_controller: AbstractBotController,
-     custom_commands: AbstractCustomCommandsDB = CustomCommandsDB()) -> None:
+    def __init__(self, custom_commands: AbstractCustomCommandsDB = CustomCommandsDB()) -> None:
         self.__commands = custom_commands
-        self.__bot_controller = bot_controller
-        CommandController.__instance = self
-    
-    def get_instance() -> 'CommandController':
-        if CommandController.__instance is None:
-            CommandController()
-        return CommandController.__instance
 
     def command_list(self) -> Optional[List[str]]:
         return self.__commands.get_all_command_names()
