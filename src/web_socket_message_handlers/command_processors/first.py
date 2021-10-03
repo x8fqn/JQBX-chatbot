@@ -51,7 +51,7 @@ class FirstCommandProcessor(AbstractCommandProcessor):
                 's' if int(firstDB['thumbsDown']) % 10 != 1 else '')]
 
         if (room_state.djs[0]['uri'] == jqbx_first_request['user']['uri']):
-            if jqbx_first_request['room']['_id'] == self.__settings.room_id:
+            if jqbx_first_request['room']['_id'] == settings.room_id:
                 msg.insert(0, ':cake:')
             else:
                 msg.insert(0, ':cookie:')
