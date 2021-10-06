@@ -19,5 +19,6 @@ class PlayTrackHandler(AbstractWebSocketMessageHandler):
                 ", ".join([i['name'] for i in core.room_state.current_track['artists']])
                 ))
         if core.settings.autofirst_isEnabled:
-            self.__first_processor.process(core.room_state.djs[0]['id'], None)
+            self.__first_processor.process(core.room_state.djs[0]['id'], None,
+                core.bot_controller, core.room_state, core.settings, core.command_controller)
         core.spotify.playlist_add_items(core.settings.spotify_playlist_playback, [core.room_state.current_track['uri']])
